@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hyeongrok91-collab.github.io/sitemap.xml
