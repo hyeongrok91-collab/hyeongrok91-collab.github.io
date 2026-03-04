@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="esED81cLkhXtqoloRlvSAtnYPkHvSsup-XjL_yLTawk" />
+    <title>ECC and Intelligence Decomposition — Hyeong Rok Lee</title>
+    <meta name="citation_title"
+        content="The Information Theory of AI Architectures: Effective Computational Capacity and Intelligence Decomposition">
+    <meta name="citation_author" content="Lee, Hyeong Rok">
+    <meta name="citation_date" content="2026/03">
+    <meta name="citation_publication_date" content="2026/03/01">
+    <meta name="citation_online_date" content="2026/03/01">
+    <meta name="citation_pdf_url" content="https://hyeongrok91-collab.github.io/paper_b.pdf">
+    <meta name="citation_doi" content="10.5281/zenodo.18865785">
+    <meta name="citation_language" content="en">
+    <meta name="citation_keywords"
+        content="effective computational capacity; intelligence decomposition; neural architecture; Jacobian rank; capacity measure; information theory; transformer">
+    <meta name="description"
+        content="We define Effective Computational Capacity (ECC) as the generic Jacobian rank of the realization map from parameters to functions, and prove it is the unique capacity measure satisfying three natural axioms. We decompose intelligence as Intelligence = ECC × τ_rep × τ_stat × τ_opt.">
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            line-height: 1.7;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta {
+            color: #8b949e;
+            margin-bottom: 1.5rem;
+        }
+
+        a {
+            color: #58a6ff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #e6edf3;
+            text-decoration: none;
+            margin-right: 0.5rem;
+        }
+
+        .btn:hover {
+            border-color: #58a6ff;
+            color: #58a6ff;
+        }
+
+        p {
+            color: #8b949e;
+        }
+    </style>
+</head>
+
+<body>
+    <p><a href="/">← Back to all publications</a></p>
+    <h1>The Information Theory of AI Architectures: Effective Computational Capacity and Intelligence Decomposition</h1>
+    <div class="meta">Hyeong Rok Lee · March 2026 · Preprint</div>
+    <a class="btn" href="paper_b.pdf">📄 PDF</a>
+    <a class="btn" href="https://doi.org/10.5281/zenodo.18865785">🔗 DOI</a>
+    <h2>Abstract</h2>
+    <p>We define Effective Computational Capacity (ECC) as the generic Jacobian rank of the realization map from
+        parameters to functions. This quantity measures the number of functionally independent parameter directions of a
+        neural architecture, and we prove that it is the unique capacity measure satisfying three natural axioms:
+        equivalence-invariance, direct-sum additivity, and normalization. We compute corrected ECC formulas for standard
+        transformer components. For full multi-head attention with H heads, head dimension d_h, and value dimension d_v,
+        ECC_Attn = H[d_h(2d−d_h) + d_v(2d−d_v)]. For a width-m ReLU feed-forward network, ECC_FFN = m(2d−1). We define
+        task intelligence by Intelligence(T) = ECC · τ_rep · τ_stat · τ_opt, where τ_rep is representational alignment,
+        τ_stat statistical efficiency, and τ_opt optimization quality. We prove a conditional coding theorem linking
+        excess risk to an aligned approximation dimension k, and we isolate the exact point at which a purely static
+        bridge from ECC to performance fails. The correct local bridge is a measurable residual-tail quantity η_T(k)
+        derived from the pullback task metric M_T = J*ᵀ G_T J*.</p>
+</body>
+
+</html>

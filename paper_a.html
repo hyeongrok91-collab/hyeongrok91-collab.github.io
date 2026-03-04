@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="esED81cLkhXtqoloRlvSAtnYPkHvSsup-XjL_yLTawk" />
+    <title>The d² Pullback Theorem — Hyeong Rok Lee</title>
+    <meta name="citation_title" content="The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem">
+    <meta name="citation_author" content="Lee, Hyeong Rok">
+    <meta name="citation_date" content="2026/03">
+    <meta name="citation_publication_date" content="2026/03/01">
+    <meta name="citation_online_date" content="2026/03/01">
+    <meta name="citation_pdf_url" content="https://hyeongrok91-collab.github.io/paper_a.pdf">
+    <meta name="citation_doi" content="10.5281/zenodo.18842724">
+    <meta name="citation_language" content="en">
+    <meta name="citation_keywords"
+        content="attention mechanism; pullback theorem; Jacobian rank; polynomial attention; transformer; optimization geometry">
+    <meta name="description"
+        content="Self-attention is usually described as an n×n operation. We prove that the intrinsic optimization dimension is d², not n². The d² pullback theorem shows that gradients with respect to M = W_Q W_K^T lie in a d²-dimensional subspace.">
+    <style>
+        body {
+            font-family: -apple-system, sans-serif;
+            background: #0d1117;
+            color: #e6edf3;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+            line-height: 1.7;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .meta {
+            color: #8b949e;
+            margin-bottom: 1.5rem;
+        }
+
+        a {
+            color: #58a6ff;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            color: #e6edf3;
+            text-decoration: none;
+            margin-right: 0.5rem;
+        }
+
+        .btn:hover {
+            border-color: #58a6ff;
+            color: #58a6ff;
+        }
+
+        p {
+            color: #8b949e;
+        }
+    </style>
+</head>
+
+<body>
+    <p><a href="/">← Back to all publications</a></p>
+    <h1>The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem</h1>
+    <div class="meta">Hyeong Rok Lee · March 2026 · Preprint</div>
+    <a class="btn" href="paper_a.pdf">📄 PDF</a>
+    <a class="btn" href="https://doi.org/10.5281/zenodo.18842724">🔗 DOI</a>
+    <h2>Abstract</h2>
+    <p>Self-attention is usually described as an n × n operation. We argue that this is the wrong intrinsic dimension.
+        For a single head with token matrix X ∈ ℝⁿˣᵈ and parameter product M = W_Q W_Kᵀ ∈ ℝᵈˣᵈ, the score matrix has the
+        constrained bilinear form S(M) = XMXᵀ/√d. Our first result is the d² pullback theorem: for any differentiable
+        loss through a row-wise attention map, the gradient with respect to M is exactly the sandwich transform
+        X⊤G(M)X/√d. Hence optimization depends only on the bilinear score subspace whose dimension is rank(X)² and
+        equals d² whenever X has full column rank. Our second result computes the exact local Jacobian rank for analytic
+        row normalizers: rank D_M P(0) = r(r − ε_X). We further prove same-depth uniform replacement of softmax
+        attention by positive polynomial attention, formulate a conditional depth-compensation theorem, and establish a
+        no-go theorem for universal fixed-width degree-2 simulation.</p>
+</body>
+
+</html>
