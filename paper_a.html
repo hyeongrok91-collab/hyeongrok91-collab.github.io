@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="esED81cLkhXtqoloRlvSAtnYPkHvSsup-XjL_yLTawk" />
     <title>The d² Pullback Theorem — Hyeong Rok Lee</title>
+
+    <!-- Google Scholar meta tags -->
     <meta name="citation_title" content="The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem">
     <meta name="citation_author" content="Lee, Hyeong Rok">
     <meta name="citation_date" content="2026/03">
@@ -15,71 +17,605 @@
     <meta name="citation_doi" content="10.5281/zenodo.18842724">
     <meta name="citation_language" content="en">
     <meta name="citation_keywords"
-        content="attention mechanism; pullback theorem; Jacobian rank; polynomial attention; transformer; optimization geometry">
+        content="attention mechanism; pullback theorem; Jacobian rank; bilinear score; polynomial attention; softmax replacement; squared attention; transformer; optimization geometry; d-squared">
+
     <meta name="description"
-        content="Self-attention is usually described as an n×n operation. We prove that the intrinsic optimization dimension is d², not n². The d² pullback theorem shows that gradients with respect to M = W_Q W_K^T lie in a d²-dimensional subspace.">
+        content="We prove the d² pullback theorem: the gradient of any loss through attention lies in a d²-dimensional bilinear subspace. We compute exact Jacobian ranks and prove same-depth softmax-to-polynomial replacement.">
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+
     <style>
+        :root {
+            --bg: #0d1117;
+            --fg: #e6edf3;
+            --muted: #8b949e;
+            --accent: #58a6ff;
+            --border: #30363d;
+            --card: #161b22;
+            --theorem-bg: #1c2333;
+            --proof-bg: #13171f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: -apple-system, sans-serif;
-            background: #0d1117;
-            color: #e6edf3;
-            max-width: 800px;
+            font-family: 'Segoe UI', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 860px;
             margin: 0 auto;
-            padding: 2rem 1.5rem;
-            line-height: 1.7;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .meta {
-            color: #8b949e;
-            margin-bottom: 1.5rem;
+            padding: 2rem 1.5rem 4rem;
         }
 
         a {
-            color: #58a6ff;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-size: 1.65rem;
+            margin: 0 0 0.3rem;
+            line-height: 1.3;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin: 2.5rem 0 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 1.8rem 0 0.7rem;
+            color: var(--accent);
+        }
+
+        h4 {
+            font-size: 1rem;
+            margin: 1.2rem 0 0.5rem;
+        }
+
+        p {
+            margin: 0 0 1rem;
+            color: var(--fg);
+        }
+
+        .meta {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
         }
 
         .btn {
             display: inline-block;
-            padding: 0.4rem 1rem;
-            border: 1px solid #30363d;
+            padding: 0.35rem 1rem;
+            border: 1px solid var(--border);
             border-radius: 6px;
-            color: #e6edf3;
-            text-decoration: none;
+            color: var(--fg);
             margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
         }
 
         .btn:hover {
-            border-color: #58a6ff;
-            color: #58a6ff;
+            border-color: var(--accent);
+            color: var(--accent);
+            text-decoration: none;
         }
 
-        p {
-            color: #8b949e;
+        .theorem,
+        .definition,
+        .proposition,
+        .remark,
+        .example,
+        .hypothesis {
+            background: var(--theorem-bg);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .theorem strong,
+        .definition strong,
+        .proposition strong,
+        .example strong,
+        .hypothesis strong {
+            color: var(--accent);
+        }
+
+        .proof {
+            background: var(--proof-bg);
+            border-left: 3px solid var(--border);
+            border-radius: 4px;
+            padding: 0.8rem 1.2rem;
+            margin: 0.8rem 0;
+            font-size: 0.95rem;
+        }
+
+        .proof-label {
+            font-style: italic;
+            color: var(--muted);
+        }
+
+        .remark {
+            border-left-color: var(--muted);
+        }
+
+        .remark strong {
+            color: var(--muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 0.5rem 0.7rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: var(--card);
+            color: var(--accent);
+        }
+
+        ul,
+        ol {
+            margin: 0 0 1rem 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.3rem;
+        }
+
+        .boxed {
+            background: var(--card);
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+            text-align: center;
+        }
+
+        .back {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.2rem 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <p><a href="/">← Back to all publications</a></p>
-    <h1>The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem</h1>
-    <div class="meta">Hyeong Rok Lee · March 2026 · Preprint</div>
-    <a class="btn" href="paper_a.pdf">📄 PDF</a>
-    <a class="btn" href="https://doi.org/10.5281/zenodo.18842724">🔗 DOI</a>
-    <h2>Abstract</h2>
-    <p>Self-attention is usually described as an n × n operation. We argue that this is the wrong intrinsic dimension.
-        For a single head with token matrix X ∈ ℝⁿˣᵈ and parameter product M = W_Q W_Kᵀ ∈ ℝᵈˣᵈ, the score matrix has the
-        constrained bilinear form S(M) = XMXᵀ/√d. Our first result is the d² pullback theorem: for any differentiable
-        loss through a row-wise attention map, the gradient with respect to M is exactly the sandwich transform
-        X⊤G(M)X/√d. Hence optimization depends only on the bilinear score subspace whose dimension is rank(X)² and
-        equals d² whenever X has full column rank. Our second result computes the exact local Jacobian rank for analytic
-        row normalizers: rank D_M P(0) = r(r − ε_X). We further prove same-depth uniform replacement of softmax
-        attention by positive polynomial attention, formulate a conditional depth-compensation theorem, and establish a
-        no-go theorem for universal fixed-width degree-2 simulation.</p>
+    <div class="container">
+
+        <p class="back"><a href="/">← Back to all publications</a></p>
+
+        <h1>The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem</h1>
+        <div class="meta">Hyeong Rok Lee · March 2026 · Preprint</div>
+        <a class="btn" href="paper_a.pdf">📄 PDF</a>
+        <a class="btn" href="https://doi.org/10.5281/zenodo.18842724">🔗 DOI</a>
+
+        <!-- ===== Abstract ===== -->
+        <h2>Abstract</h2>
+        <p>Self-attention is usually described as an $n \times n$ operation because it materializes all token pairs. We
+            argue that this is the wrong intrinsic dimension. For a single head with token matrix $X \in \mathbb{R}^{n
+            \times d}$ and parameter product $M = W_Q W_K^\top \in \mathbb{R}^{d \times d}$, the score matrix has the
+            constrained bilinear form</p>
+        $$S(M) = \frac{1}{\sqrt{d}} X M X^\top.$$
+        <p>Our first result is the <strong>d² pullback theorem</strong>: for any differentiable loss through a row-wise
+            attention map, the gradient with respect to $M$ is exactly the sandwich transform $X^\top G(M) X /
+            \sqrt{d}$, where $G(M)$ is the gradient in token-pair space. Hence optimization depends only on the bilinear
+            score subspace $\mathcal{S}_X = \{XAX^\top : A \in \mathbb{R}^{d \times d}\}$, whose dimension is
+            $\mathrm{rank}(X)^2$ and equals $d^2$ whenever $X$ has full column rank.</p>
+        <p>Our second result computes the exact local Jacobian rank for analytic row normalizers:</p>
+        $$\mathrm{rank}\, D_M P(0) = r(r - \varepsilon_X),$$
+        <p>where $r = \mathrm{rank}(X)$ and $\varepsilon_X = \dim(\mathrm{col}(X) \cap \mathrm{span}\{\mathbf{1}_n\})$.
+            Thus the generic rank is $d^2$ in the standard full-rank regime.</p>
+        <p>Our third result proves same-depth uniform replacement of softmax attention by <em>positive polynomial
+                attention</em> on compact bounded-score domains. We then formulate a simulation hypothesis under which
+            each degree-$p$ polynomial block can be replaced by $1 + O(\log p)$ degree-2 residual attention sublayers,
+            and prove a <strong>no-go theorem</strong>: universal fixed-width degree-2 simulation requires $L(2w^2+3)
+            \ge p$.</p>
+
+
+        <!-- ===== 1. Introduction ===== -->
+        <h2>1. Introduction</h2>
+        <p>Attention began as a mechanism for alignment in neural machine translation. The Transformer converted that
+            alignment mechanism into the central computational primitive of modern sequence models. Since then, a large
+            literature has tried to reduce the quadratic cost of forming attention matrices. The dominant question is
+            computational: how can one approximate or avoid the $n \times n$ attention matrix without sacrificing
+            accuracy?</p>
+
+        <p>This paper asks a different question. What is the <em>intrinsic dimension</em> of the attention optimization
+            problem? For a single head, the pre-softmax scores are generated by a bilinear form in $d$ dimensions:</p>
+        $$S(M) = \frac{1}{\sqrt{d}} X M X^\top.$$
+        <p>Thus the pre-softmax score geometry is controlled by at most $d^2$ degrees of freedom, not $n^2$.</p>
+
+        <p>The crucial observation is that optimization never sees the full token-pair gradient directly. By the chain
+            rule, the gradient with respect to $M$ is obtained by sandwiching the token-pair gradient between $X^\top$
+            and $X$. This induces a precise pullback from the $n^2$-dimensional token-pair world to a $d^2$-dimensional
+            parameter world.</p>
+
+        <h3>Main contributions</h3>
+        <ol>
+            <li><strong>The d² pullback theorem:</strong> the exact gradient w.r.t. $M$ is the pullback $X^\top G(M) X /
+                \sqrt{d}$, so optimization depends only on a subspace of dimension $\mathrm{rank}(X)^2$.</li>
+            <li><strong>Exact local Jacobian rank</strong> for analytic row normalizers: $r(r - \varepsilon_X)$,
+                generically $d^2$.</li>
+            <li><strong>Same-depth positive polynomial replacement</strong> of softmax on compact bounded-score domains
+                (unconditional).</li>
+            <li><strong>Conditional depth compensation:</strong> degree-2 attention emulates degree-$p$ polynomial
+                attention with $L + O(L \log p)$ total sublayers under a simulation hypothesis.</li>
+            <li><strong>No-go theorem:</strong> universal fixed-width simulation requires $L(2w^2+3) \ge p$.</li>
+        </ol>
+
+
+        <!-- ===== 2. Attention as Euclidean Matching ===== -->
+        <h2>2. Attention as Euclidean Matching</h2>
+        <p>The pre-softmax score matrix $C = QK^\top$ factors through a $d$-dimensional latent space, so
+            $\mathrm{rank}(C) \le d$. Dot-product matching is equivalent to Euclidean bipartite matching up to an
+            additive constant:</p>
+
+        <div class="proposition">
+            <strong>Proposition (Attention as Euclidean matching).</strong>
+            $$\max_{\pi \in S_n} \sum_{i=1}^n q_i^\top k_{\pi(i)} = \frac{1}{2}\sum_i \|q_i\|^2 + \frac{1}{2}\sum_j
+            \|k_j\|^2 - \frac{1}{2}\min_{\pi} \sum_i \|q_i - k_{\pi(i)}\|^2.$$
+        </div>
+        <p>Thus the pre-softmax attention scores encode a Euclidean assignment geometry in $\mathbb{R}^d$. Softmax turns
+            these scores into row-stochastic weights, but that transformation is <em>rank-inflating</em>, obscuring the
+            underlying bilinear geometry.</p>
+
+
+        <!-- ===== 3. Pullback Theorem ===== -->
+        <h2>3. The Master Pullback Theorem</h2>
+
+        <div class="theorem">
+            <strong>Theorem (Master pullback theorem).</strong> For each attention head $h$ with query tokens $X_h$, key
+            tokens $Y_h$, score matrix $S_h(M_h) = \frac{1}{\sqrt{d_h}} X_h M_h Y_h^\top + B_h$, and loss $\mathcal{J}$:
+            $$\boxed{\nabla_{M_h} \mathcal{J} = \frac{1}{\sqrt{d_h}} X_h^\top G_h(M_h) Y_h.}$$
+            The gradient lies in the bilinear pullback subspace $\mathcal{S}_{X_h,Y_h} := \{X_h^\top A Y_h : A \in
+            \mathbb{R}^{n_q \times n_k}\}$, with $\dim \mathcal{S}_{X_h,Y_h} = \mathrm{rank}(X_h) \cdot
+            \mathrm{rank}(Y_h)$.
+        </div>
+        <div class="proof">
+            <span class="proof-label">Proof.</span> By the chain rule, $D\mathcal{J}(M_h)[\Delta] = \langle G_h,
+            \frac{1}{\sqrt{d_h}} X_h \Delta Y_h^\top \rangle_F = \langle \frac{1}{\sqrt{d_h}} X_h^\top G_h Y_h, \Delta
+            \rangle_F$ using the Frobenius adjoint identity. For the dimension, rank factorizations $X_h = U_q R_q$ and
+            $Y_h = U_k R_k$ give $\dim \mathcal{S} = r_q \cdot r_k$. ∎
+        </div>
+
+        <div class="remark">
+            <strong>Remark (Optimization only sees the pullback).</strong> If two token-pair gradients $G_1, G_2$ differ
+            by an element orthogonal to $\mathcal{S}_{X_h,Y_h}$, they induce the same parameter gradient. Thus the
+            optimization-relevant object is the pullback, not the full $n^2$-dimensional field.
+        </div>
+
+        <div class="remark">
+            <strong>Remark (Cross-attention is lower-dimensional).</strong> If the encoder output has effective rank
+            $r_k < d_h$, then $\dim \mathcal{S}=r_q \cdot r_k < d_h^2$. This explains why cross-attention often
+                converges faster. </div>
+
+                <div class="proposition">
+                    <strong>Corollary (Second-order pullback).</strong> If $\mathcal{J}$ is $C^2$ in the score matrix,
+                    then the Hessian of $\mathcal{J}$ with respect to $M_h$ also respects the pullback subspace.
+                </div>
+
+
+                <!-- ===== 4. Generic Rank Theorem ===== -->
+                <h2>4. The Generic Rank Theorem</h2>
+
+                <h3>4.1 Analytic row normalizers</h3>
+                <div class="theorem">
+                    <strong>Theorem (Exact local rank formula).</strong> Let $P(M) = \Sigma(S(M))$ with analytic
+                    permutation-equivariant row normalizer. Define $r := \mathrm{rank}(X)$ and $\varepsilon_X :=
+                    \dim(\mathrm{col}(X) \cap \mathrm{span}\{\mathbf{1}_n\})$. Then:
+                    $$\boxed{\mathrm{rank}\, D_M P(0) = r(r - \varepsilon_X).}$$
+                    In the standard full-rank regime ($\mathrm{rank}(X) = d$, $\mathbf{1}_n \notin \mathrm{col}(X)$),
+                    this gives $\mathrm{rank}\, D_M P(0) = d^2$.
+                </div>
+                <div class="proof">
+                    <span class="proof-label">Proof sketch.</span> The derivative $Ds(0) = \alpha \Pi_n$ (the centering
+                    projection) by permutation-equivariance and row-stochasticity. Vectorizing gives $\mathrm{rank}\,
+                    D_M P(0) = \mathrm{rank}(\Pi_n X) \cdot \mathrm{rank}(X) = (r - \varepsilon_X) \cdot r$. Analyticity
+                    + nonzero minor at origin → full-rank set is open and dense. ∎
+                </div>
+
+                <h3>4.2 Noncritical extension (covering $x^2$)</h3>
+                <div class="theorem">
+                    <strong>Theorem (Noncritical generic rank).</strong> For an analytic kernel $\phi$ with
+                    $\phi(x)\phi'(x) \neq 0$ on a noncritical interval, define the row kernel direction $\kappa(z) :=
+                    \phi(z) \oslash \phi'(z)$ and the kernel bundle $\mathcal{K}_Z$. If $\mathcal{S}_X \cap
+                    \mathcal{K}_Z = \{0\}$ at a witness point $M_*$, then $\mathrm{rank}\, D_M P(M_*) = d^2$, and the
+                    full-rank set is open and dense.
+                </div>
+
+                <h3>4.3 Master Jacobian-rank theorem (unifying)</h3>
+                <div class="theorem">
+                    <strong>Theorem (Master Jacobian-rank theorem).</strong> For any $P(M) = \Sigma(S(M))$ with $S(M) =
+                    \frac{1}{\sqrt{d}} XMX^\top + B$:
+                    $$\boxed{\mathrm{rank}\, D_M P(M_*) = r^2 - \dim(\mathcal{S}_X \cap \ker D\Sigma(Z_*)).}$$
+                    This covers masked/causal attention with visible sets $J_i$ by replacing $\ker D\Sigma$ with the
+                    masked kernel bundle $\mathcal{K}_Z^J$.
+                </div>
+
+                <h3>4.4 FFN Jacobian-span bound</h3>
+                <div class="theorem">
+                    <strong>Theorem (FFN Jacobian-span bound).</strong> For a residual FFN $F(x) = x + W_2 \sigma(W_1 x
+                    + b_1) + b_2$:
+                    $$\mathrm{vec}(J_F(x) - I_d) = (W_1^\top \odot W_2) \sigma'(W_1 x + b_1),$$
+                    $$\dim \mathcal{J}_{\mathrm{FFN}} \le \mathrm{rank}(W_1^\top \odot W_2) \le \min(m, d^2).$$
+                </div>
+
+
+                <!-- ===== 5. Same-Depth Replacement ===== -->
+                <h2>5. Same-Depth Positive Polynomial Replacement</h2>
+                <div class="theorem">
+                    <strong>Theorem (Same-depth positive polynomial replacement).</strong> Let $T = B_{\exp,L} \circ
+                    \cdots \circ B_{\exp,1}$ be a residual softmax transformer stack on a compact set $\mathcal{K}$ with
+                    bounded scores $|Z_{ij}| \le R$. Then for every $\varepsilon > 0$ there exists a positive polynomial
+                    $P$ (constructed via squaring: $P(x) = R_q(x)^2 + \delta^2$) such that the same-depth stack
+                    $\widetilde{T}$ using $P$ in place of $\exp$ satisfies:
+                    $$\sup_{X \in \mathcal{K}} \|T(X) - \widetilde{T}(X)\|_\infty \le \varepsilon.$$
+                </div>
+                <p>The proof combines Weierstrass approximation (for scalar $\exp \to P$), normalization stability
+                    (Lemma), and a telescoping hybrid argument across layers.</p>
+
+
+                <!-- ===== 6. Depth Compensation ===== -->
+                <h2>6. Conditional Depth Compensation for Degree-2 Attention</h2>
+
+                <h3>Residual quadratic degree growth</h3>
+                <p>If each residual sublayer has degree $\le 2$, then $m$ composed sublayers produce degree $\le 2^m$ —
+                    so $m = O(\log p)$ sublayers suffice to reach degree $p$ in principle.</p>
+
+                <div class="hypothesis">
+                    <strong>Hypothesis (Stable simulation hypothesis).</strong> Fix a compact set $\mathcal{K}$ and a
+                    degree-$p$ positive polynomial attention block $B_P : \mathcal{K} \to \mathcal{K}$. There exist
+                    constants $c_0, c_1 > 0$ and a residual stack $\widehat{B}_{2,p,\zeta} = G_m \circ \cdots \circ G_1$
+                    with $m \le c_0 + c_1 \log p$ quadratic sublayers that uniformly approximates $B_P$ to accuracy
+                    $\zeta$ on $\mathcal{K}$ while preserving $\mathcal{K}$-invariance and Lipschitz control.
+                </div>
+
+                <div class="theorem">
+                    <strong>Theorem (Conditional depth compensation).</strong> Under the simulation hypothesis, each
+                    softmax block can be replaced by $1 + O(\log p)$ quadratic residual sublayers, giving total depth $L
+                    + O(L \log p)$.
+                </div>
+
+
+                <!-- ===== 7. No-Go Theorem ===== -->
+                <h2>7. No-Go Theorem for Universal Degree-2 Simulation</h2>
+
+                <div class="theorem">
+                    <strong>Theorem (No-go for universal degree-2 simulation).</strong> Fix a canonical degree-2 stack
+                    with fixed auxiliary width $w$ and $L$ layers (total parameters $N = L(2w^2+3)$). If this stack can
+                    uniformly approximate a degree-$p$ anchored positive polynomial target family to arbitrary precision
+                    on test inputs, then:
+                    $$\boxed{N \ge p.}$$
+                </div>
+                <div class="proof">
+                    <span class="proof-label">Proof idea.</span> The target family has $p$ free parameters controlling
+                    distinct anchored polynomial coefficients. A Vandermonde argument shows these parameters trace out a
+                    $p$-dimensional image. The degree-2 stack maps are rational in their $N$ parameters, so their image
+                    is semialgebraic with dimension $\le N$. If the stack image is dense in the target image, then $N
+                    \ge p$ by semialgebraic dimension theory (Tarski–Seidenberg). ∎
+                </div>
+
+                <div class="proposition">
+                    <strong>Corollary (Width–depth tradeoff).</strong> For canonical degree-2 stacks with $w = O(1)$,
+                    the required depth is $L \ge p/(2w^2+3) = \Omega(p)$. Logarithmic depth suffices only if width grows
+                    with $p$.
+                </div>
+
+                <p><strong>The key structural message:</strong> Degree-2 attention is <em>optimization-sufficient</em>
+                    (same $d^2$ landscape) but <em>simulation-insufficient</em> (cannot universally replicate arbitrary
+                    polynomial attention in fixed width).</p>
+
+
+                <!-- ===== 8. O(nd³) Squared Attention ===== -->
+                <h2>8. The $O(nd^3)$ Squared Attention Block</h2>
+                <p>The unnormalized squared-attention numerator $Y_i = \sum_j (q_i^\top k_j)^2 v_j$ admits an exact
+                    factorization via a precomputed tensor:</p>
+                $$T_{ab} = \sum_{j=1}^n k_{ja} k_{jb} v_j, \quad Y_i = \sum_{a,b=1}^d q_{ia} q_{ib} T_{ab},$$
+                <p>giving $O(nd^2 d_v)$ complexity, i.e. $O(nd^3)$ when $d_v = d$.</p>
+
+                <table>
+                    <tr>
+                        <th>Mechanism</th>
+                        <th>Per-head time</th>
+                        <th>Blocks needed</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>Softmax attention</td>
+                        <td>$O(n^2 d)$</td>
+                        <td>$L$</td>
+                        <td>Baseline</td>
+                    </tr>
+                    <tr>
+                        <td>Positive polynomial (degree $p$)</td>
+                        <td>$O(n r_p d_v)$</td>
+                        <td>$L$</td>
+                        <td>Same-depth replacement (Thm 5)</td>
+                    </tr>
+                    <tr>
+                        <td>Squared attention ($p=2$)</td>
+                        <td>$O(nd^3)$</td>
+                        <td>$L + O(L\log p)$</td>
+                        <td>Conditional depth compensation (Thm 6)</td>
+                    </tr>
+                </table>
+
+
+                <!-- ===== 9. Experiments ===== -->
+                <h2>9. Experiments</h2>
+
+                <h3>9.1 Numerical verification of the theorems</h3>
+                <ul>
+                    <li><strong>Pullback theorem sanity check:</strong> relative Frobenius error $\sim 10^{-16}$ in
+                        double precision.</li>
+                    <li><strong>Generic rank theorem:</strong> exact agreement with $r(r-\varepsilon_X)$ prediction for
+                        all tested $(r, \varepsilon_X)$ combinations.</li>
+                    <li><strong>Same-depth replacement:</strong> Degree-24 positive polynomial preserves accuracy and
+                        logits ($< 10^{-3}$ max deviation) in kernel-only swap test.</li>
+                </ul>
+
+                <h3>9.2 Toy causal retrieval</h3>
+                <table>
+                    <tr>
+                        <th>Kernel</th>
+                        <th>Loss</th>
+                        <th>Acc</th>
+                        <th>max|Z|</th>
+                    </tr>
+                    <tr>
+                        <td>Softmax</td>
+                        <td>0.0008</td>
+                        <td>1.000</td>
+                        <td>42.25</td>
+                    </tr>
+                    <tr>
+                        <td>Raw square ($z^2$)</td>
+                        <td>2.52</td>
+                        <td>0.145</td>
+                        <td>55.33</td>
+                    </tr>
+                    <tr>
+                        <td>CSQ (prefix-centered)</td>
+                        <td>0.0004</td>
+                        <td>1.000</td>
+                        <td>18.01</td>
+                    </tr>
+                    <tr>
+                        <td>Hybrid (CSQ/softmax)</td>
+                        <td>0.0004</td>
+                        <td>1.000</td>
+                        <td>25.78</td>
+                    </tr>
+                </table>
+                <p>CSQ achieves comparable or better accuracy with substantially smaller score magnitudes.</p>
+
+                <h3>9.3 Pullback-aware distillation</h3>
+                <table>
+                    <tr>
+                        <th>Distill loss</th>
+                        <th>Loss</th>
+                        <th>Acc</th>
+                        <th>Attn-rel</th>
+                        <th>PB-norm</th>
+                    </tr>
+                    <tr>
+                        <td>None</td>
+                        <td>2.76</td>
+                        <td>0.147</td>
+                        <td>0.983</td>
+                        <td>1230</td>
+                    </tr>
+                    <tr>
+                        <td>Attn KL</td>
+                        <td>0.009</td>
+                        <td>1.000</td>
+                        <td>0.711</td>
+                        <td>630</td>
+                    </tr>
+                    <tr>
+                        <td>Pullback</td>
+                        <td>0.008</td>
+                        <td>1.000</td>
+                        <td>0.648</td>
+                        <td>613</td>
+                    </tr>
+                    <tr>
+                        <td>KL + pullback</td>
+                        <td>0.008</td>
+                        <td>1.000</td>
+                        <td>0.615</td>
+                        <td>614</td>
+                    </tr>
+                </table>
+                <p>Combined KL + pullback distillation yields the smallest attention-map error at equal downstream
+                    accuracy.</p>
+
+
+                <!-- ===== 10. Discussion ===== -->
+                <h2>10. Discussion</h2>
+
+                <h4>What our theorems prove</h4>
+                <p>Theorem 1 identifies the exact optimization-relevant object (the sandwich transform). Theorem 2 shows
+                    the corresponding Jacobian rank is generically $d^2$. Theorem 3 proves same-depth softmax→polynomial
+                    replacement. Theorem 4 isolates the degree-2 question into a simulation hypothesis. Theorem 5
+                    establishes an unconditional $\Omega(p)$ lower bound for fixed-width simulation.</p>
+
+                <h4>What they do not prove</h4>
+                <p>They do <em>not</em> show that depth alone solves training stability for polynomial attention.
+                    Stability requires suitable scaling and normalization. Our theorems are expressivity and
+                    optimization-dimension results; stability is a separate design constraint.</p>
+
+                <h4>The central conceptual point</h4>
+                <p>Attention should not be understood primarily as an $n \times n$ matrix operation. It should be
+                    understood as a <strong>bilinear $d^2$-dimensional problem</strong> viewed through an
+                    $n^2$-dimensional rendering.</p>
+
+
+                <!-- ===== References ===== -->
+                <h2>References</h2>
+                <ol>
+                    <li>Bahdanau, Cho, Bengio. "Neural Machine Translation by Jointly Learning to Align and Translate."
+                        ICLR 2015.</li>
+                    <li>Vaswani et al. "Attention Is All You Need." NeurIPS 2017.</li>
+                    <li>Katharopoulos et al. "Transformers are RNNs: Fast Autoregressive Transformers with Linear
+                        Attention." ICML 2020.</li>
+                    <li>Choromanski et al. "Rethinking Attention with Performers." ICLR 2021.</li>
+                    <li>Henry, Marchetti, Kohn. "Geometry of Lightning Self-Attention." ICLR 2025.</li>
+                    <li>Keles et al. "On the Computational Complexity of Self-Attention." ALT 2023.</li>
+                    <li>Nauen et al. "TaylorShift." NeurIPS 2024.</li>
+                    <li>Saratchandran et al. "Rethinking Attention." 2024.</li>
+                    <li>Aggarwal et al. "Optimal Polynomial Approximation." 2022.</li>
+                </ol>
+
+                <p style="margin-top:3rem; color: var(--muted); font-size: 0.85rem; text-align: center;">
+                    © 2026 Hyeong Rok Lee · <a href="mailto:rok@gahyeon.net">rok@gahyeon.net</a> · <a href="/">Home</a>
+                </p>
+
+        </div>
 </body>
 
 </html>

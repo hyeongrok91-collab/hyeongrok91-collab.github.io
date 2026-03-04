@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="esED81cLkhXtqoloRlvSAtnYPkHvSsup-XjL_yLTawk" />
-    <title>ECC and Intelligence Decomposition — Hyeong Rok Lee</title>
+    <title>The Information Theory of AI Architectures: ECC and Intelligence Decomposition — Hyeong Rok Lee</title>
+
+    <!-- Google Scholar meta tags -->
     <meta name="citation_title"
         content="The Information Theory of AI Architectures: Effective Computational Capacity and Intelligence Decomposition">
     <meta name="citation_author" content="Lee, Hyeong Rok">
@@ -16,73 +18,697 @@
     <meta name="citation_doi" content="10.5281/zenodo.18865785">
     <meta name="citation_language" content="en">
     <meta name="citation_keywords"
-        content="effective computational capacity; intelligence decomposition; neural architecture; Jacobian rank; capacity measure; information theory; transformer">
+        content="effective computational capacity; intelligence decomposition; neural architecture; Jacobian rank; capacity measure; information theory; transformer; Mamba; scaling laws; LoRA; pullback task metric">
+
     <meta name="description"
-        content="We define Effective Computational Capacity (ECC) as the generic Jacobian rank of the realization map from parameters to functions, and prove it is the unique capacity measure satisfying three natural axioms. We decompose intelligence as Intelligence = ECC × τ_rep × τ_stat × τ_opt.">
+        content="We define Effective Computational Capacity (ECC) as the generic Jacobian rank of the realization map and prove it is the unique capacity measure satisfying three natural axioms. We decompose intelligence as Intelligence = ECC × τ_rep × τ_stat × τ_opt.">
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+
     <style>
+        :root {
+            --bg: #0d1117;
+            --fg: #e6edf3;
+            --muted: #8b949e;
+            --accent: #58a6ff;
+            --border: #30363d;
+            --card: #161b22;
+            --theorem-bg: #1c2333;
+            --proof-bg: #13171f;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            font-family: -apple-system, sans-serif;
-            background: #0d1117;
-            color: #e6edf3;
-            max-width: 800px;
+            font-family: 'Segoe UI', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 860px;
             margin: 0 auto;
-            padding: 2rem 1.5rem;
-            line-height: 1.7;
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .meta {
-            color: #8b949e;
-            margin-bottom: 1.5rem;
+            padding: 2rem 1.5rem 4rem;
         }
 
         a {
-            color: #58a6ff;
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-size: 1.65rem;
+            margin: 0 0 0.3rem;
+            line-height: 1.3;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin: 2.5rem 0 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 1.8rem 0 0.7rem;
+            color: var(--accent);
+        }
+
+        h4 {
+            font-size: 1rem;
+            margin: 1.2rem 0 0.5rem;
+        }
+
+        p {
+            margin: 0 0 1rem;
+            color: var(--fg);
+        }
+
+        .meta {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
         }
 
         .btn {
             display: inline-block;
-            padding: 0.4rem 1rem;
-            border: 1px solid #30363d;
+            padding: 0.35rem 1rem;
+            border: 1px solid var(--border);
             border-radius: 6px;
-            color: #e6edf3;
-            text-decoration: none;
+            color: var(--fg);
             margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
         }
 
         .btn:hover {
-            border-color: #58a6ff;
-            color: #58a6ff;
+            border-color: var(--accent);
+            color: var(--accent);
+            text-decoration: none;
         }
 
-        p {
-            color: #8b949e;
+        .theorem,
+        .definition,
+        .proposition,
+        .remark,
+        .example {
+            background: var(--theorem-bg);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .theorem strong,
+        .definition strong,
+        .proposition strong,
+        .example strong {
+            color: var(--accent);
+        }
+
+        .proof {
+            background: var(--proof-bg);
+            border-left: 3px solid var(--border);
+            border-radius: 4px;
+            padding: 0.8rem 1.2rem;
+            margin: 0.8rem 0;
+            font-size: 0.95rem;
+        }
+
+        .proof-label {
+            font-style: italic;
+            color: var(--muted);
+        }
+
+        .remark {
+            border-left-color: var(--muted);
+        }
+
+        .remark strong {
+            color: var(--muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 0.5rem 0.7rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: var(--card);
+            color: var(--accent);
+        }
+
+        ul,
+        ol {
+            margin: 0 0 1rem 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.3rem;
+        }
+
+        .boxed {
+            background: var(--card);
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+            text-align: center;
+        }
+
+        .back {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.2rem 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
 
 <body>
-    <p><a href="/">← Back to all publications</a></p>
-    <h1>The Information Theory of AI Architectures: Effective Computational Capacity and Intelligence Decomposition</h1>
-    <div class="meta">Hyeong Rok Lee · March 2026 · Preprint</div>
-    <a class="btn" href="paper_b.pdf">📄 PDF</a>
-    <a class="btn" href="https://doi.org/10.5281/zenodo.18865785">🔗 DOI</a>
-    <h2>Abstract</h2>
-    <p>We define Effective Computational Capacity (ECC) as the generic Jacobian rank of the realization map from
-        parameters to functions. This quantity measures the number of functionally independent parameter directions of a
-        neural architecture, and we prove that it is the unique capacity measure satisfying three natural axioms:
-        equivalence-invariance, direct-sum additivity, and normalization. We compute corrected ECC formulas for standard
-        transformer components. For full multi-head attention with H heads, head dimension d_h, and value dimension d_v,
-        ECC_Attn = H[d_h(2d−d_h) + d_v(2d−d_v)]. For a width-m ReLU feed-forward network, ECC_FFN = m(2d−1). We define
-        task intelligence by Intelligence(T) = ECC · τ_rep · τ_stat · τ_opt, where τ_rep is representational alignment,
-        τ_stat statistical efficiency, and τ_opt optimization quality. We prove a conditional coding theorem linking
-        excess risk to an aligned approximation dimension k, and we isolate the exact point at which a purely static
-        bridge from ECC to performance fails. The correct local bridge is a measurable residual-tail quantity η_T(k)
-        derived from the pullback task metric M_T = J*ᵀ G_T J*.</p>
+    <div class="container">
+
+        <p class="back"><a href="/">← Back to all publications</a></p>
+
+        <h1>The Information Theory of AI Architectures: Effective Computational Capacity and Intelligence Decomposition
+        </h1>
+        <div class="meta">Hyeong Rok Lee · March 2026 · Preprint</div>
+        <a class="btn" href="paper_b.pdf">📄 PDF</a>
+        <a class="btn" href="https://doi.org/10.5281/zenodo.18865785">🔗 DOI</a>
+
+        <!-- ===== Abstract ===== -->
+        <h2>Abstract</h2>
+        <p>We define <strong>Effective Computational Capacity (ECC)</strong> as the generic Jacobian rank of the
+            realization map from parameters to functions. This quantity measures the number of functionally independent
+            parameter directions of a neural architecture, and we prove that it is the <em>unique</em> capacity measure
+            satisfying three natural axioms: equivalence-invariance, direct-sum additivity, and normalization. We
+            compute corrected ECC formulas for standard transformer components. For full multi-head attention with $H$
+            heads, head dimension $d_h$, and value dimension $d_v$,</p>
+        <div class="boxed">$$\mathrm{ECC}_{\mathrm{Attn}} = H\big[d_h(2d - d_h) + d_v(2d - d_v)\big].$$</div>
+        <p>For a width-$m$ ReLU feed-forward network,</p>
+        <div class="boxed">$$\mathrm{ECC}_{\mathrm{FFN}} = m(2d - 1).$$</div>
+        <p>We define task intelligence by</p>
+        <div class="boxed">$$\mathrm{Intelligence}(T) = \mathrm{ECC} \cdot \tau_{\mathrm{rep}} \cdot
+            \tau_{\mathrm{stat}} \cdot \tau_{\mathrm{opt}},$$</div>
+        <p>where $\tau_{\mathrm{rep}}$ is representational alignment, $\tau_{\mathrm{stat}}$ statistical efficiency, and
+            $\tau_{\mathrm{opt}}$ optimization quality. We prove a conditional coding theorem linking excess risk to an
+            aligned approximation dimension $k$, and we isolate the exact point at which a purely static bridge from ECC
+            to performance fails. The correct local bridge is a measurable residual-tail quantity $\eta_T(k)$ derived
+            from the pullback task metric $M_T = J_*^\top G_T J_*$.</p>
+
+
+        <!-- ===== 1. Introduction ===== -->
+        <h2>1. Introduction</h2>
+        <p>Parameter count is the standard proxy for neural capacity, but it is a poor one. It does not distinguish
+            active from inactive directions, it does not explain why different architectures with similar parameter
+            counts behave differently, and it offers little guidance about why scaling laws, low-rank adaptation, sparse
+            attention, and catastrophic forgetting often admit a common geometric structure. More fundamentally, it does
+            not provide a mathematical definition of intelligence.</p>
+
+        <p>This paper proposes such a definition. The central object is the <strong>realization map</strong> $\Psi :
+            \Theta \to \mathcal{F}$, which sends a parameter vector to the function computed by the architecture on its
+            input domain. We measure the functional size of an architecture not by $\dim \Theta$ but by the generic rank
+            of $D\Psi$. This quantity, which we call <em>Effective Computational Capacity</em>, counts the number of
+            functionally independent parameter directions. It removes gauge symmetries, dead directions, and other forms
+            of overparameterized redundancy by construction.</p>
+
+        <p>The paper builds directly on <a href="paper_a.html">[1] The d² Pullback Theorem</a>, which identified the
+            $d^2$ score-side ceiling of bilinear attention and showed that degree-2 attention is Pareto-optimal on the
+            score side. The present work extends that program in two directions.</p>
+
+        <h3>Main contributions</h3>
+        <ol>
+            <li>We prove that $\mathrm{ECC}(\Psi)=\mathrm{rank}_{\mathrm{gen}}(D\Psi)$ is the unique capacity measure
+                satisfying equivalence-invariance, additivity, and normalization.</li>
+            <li>We derive corrected formulas for full multi-head attention and ReLU feed-forward layers:
+                $$\mathrm{ECC}_{\mathrm{Attn}} = H\big[d_h(2d-d_h)+d_v(2d-d_v)\big], \quad \mathrm{ECC}_{\mathrm{FFN}} =
+                m(2d-1).$$</li>
+            <li>We resolve the multi-layer additivity question: the exact formula is
+                $\mathrm{ECC}_{\mathrm{total}}=\dim(\mathcal{S}_1+\cdots+\mathcal{S}_L)$, where $\mathcal{S}_l$ is the
+                transported tangent image of layer $l$.</li>
+            <li>We prove a conditional coding theorem and isolate a measurable local bridge to performance via the
+                pullback task metric and its residual tail $\eta_T(k)$.</li>
+            <li>We define task intelligence as capacity times utilization, with an operational representational factor
+                $\tau_{\mathrm{rep}}=k_{\mathrm{use}}/\mathrm{ECC}$.</li>
+            <li>We derive applications to LoRA, forgetting, self-training, architecture screening, workload-aware
+                compression, data curation, emergence, and the technical tension between "scaling works" and "scaling
+                wastes structure."</li>
+            <li>We prove that no single architecture can maximize expected representational efficiency across all domain
+                mixtures once mismatch crossovers exist.</li>
+        </ol>
+
+
+        <!-- ===== 2. Preliminaries ===== -->
+        <h2>2. Preliminaries</h2>
+        <p>Throughout, $d$ denotes the model width, $H$ the number of attention heads, $d_h=d/H$ the head dimension,
+            $d_v$ the value dimension, $m$ the hidden width of a feed-forward network, $n$ sequence length, and $L$ the
+            number of layers. We write $\Theta \subseteq \mathbb{R}^P$ for parameter space, $\mathcal{F}$ for a function
+            space over a compact input domain $\mathcal{X}$, and $\Psi:\Theta\to\mathcal{F}$ for the realization map.
+        </p>
+
+        <p>For transformers we use the standard forms</p>
+        $$S(X;M) = \mathrm{softmax}\!\left(\frac{XMX^\top}{\sqrt{d_h}}\right), \quad \mathrm{Attn}(X) = S(X;M)\, XV,$$
+        <p>for a single head, where $M$ denotes the score kernel and $V$ a value map.</p>
+
+
+        <!-- ===== 3. ECC Definition ===== -->
+        <h2>3. Effective Computational Capacity</h2>
+
+        <h3>3.1 Definition</h3>
+        <div class="definition">
+            <strong>Definition (Architecture-level ECC).</strong> The effective computational capacity of the
+            architecture is the generic rank
+            $$\boxed{\mathrm{ECC}(\Psi) := \mathrm{rank}_{\mathrm{gen}}(D\Psi) = \max_{\theta \in \Theta}
+            \mathrm{rank}(D\Psi_\theta).}$$
+            For real-analytic realization maps, the maximum is attained on an open dense subset of $\Theta$.
+        </div>
+
+        <h3>3.2 Axiomatic Uniqueness</h3>
+        <div class="theorem">
+            <strong>Theorem (Uniqueness of ECC).</strong> Let $C$ assign a nonneg. real number to every smooth
+            realization map $\Psi:\Theta\to\mathcal{F}$. Assume:
+            <ol>
+                <li><strong>(A1) Equivalence-invariance.</strong> If $\Psi_1$ and $\Psi_2$ realize the same local family
+                    of functions, then $C(\Psi_1)=C(\Psi_2)$.</li>
+                <li><strong>(A2) Additivity.</strong> If $\Psi=\Psi_1\oplus\Psi_2$ is the direct sum of independent
+                    components, then $C(\Psi)=C(\Psi_1)+C(\Psi_2)$.</li>
+                <li><strong>(A3) Normalization.</strong> For the identity map $\mathrm{id}:\mathbb{R}\to\mathbb{R}$, one
+                    has $C(\mathrm{id})=1$.</li>
+            </ol>
+            Then $C(\Psi) = \mathrm{rank}_{\mathrm{gen}}(D\Psi) = \mathrm{ECC}(\Psi)$ for every smooth realization map.
+        </div>
+        <div class="proof">
+            <span class="proof-label">Proof.</span> By equivalence-invariance, $C$ depends only on the locally realized
+            function family. On any generic chart where the rank is constant, the constant-rank theorem identifies the
+            image with a smooth manifold of dimension $r = \mathrm{rank}_{\mathrm{gen}}(D\Psi)$. Hence there exists
+            $\varphi : \mathbb{N} \to \mathbb{R}_{\ge 0}$ with $C(\Psi) = \varphi(r)$. Additivity gives $\varphi(r_1 +
+            r_2) = \varphi(r_1) + \varphi(r_2)$ (Cauchy's equation on $\mathbb{N}$). Normalization gives $\varphi(1) =
+            1$, hence $\varphi(r) = r$. ∎
+        </div>
+
+        <div class="remark">
+            <strong>Remark.</strong> None of the axioms mentions Jacobian rank, so rank appears as a <em>theorem</em>
+            rather than an assumption. This is structurally parallel to classical uniqueness theorems for entropy.
+        </div>
+
+
+        <!-- ===== 4. ECC of Transformer Blocks ===== -->
+        <h2>4. ECC of Transformer Blocks and Related Architectures</h2>
+
+        <h3>4.1 Single-head score-side capacity</h3>
+        <div class="theorem">
+            <strong>Theorem (Single-head score-side ECC).</strong> Let $\Phi(W_Q,W_K) = W_Q W_K^\top$ with $W_Q, W_K \in
+            \mathbb{R}^{d \times d_h}$. Then
+            $$\boxed{\mathrm{ECC}_{\mathrm{score}} = d_h(2d - d_h).}$$
+            In the square case $d_h = d$, this reduces to $\mathrm{ECC}_{\mathrm{score}} = d^2$.
+        </div>
+
+        <h3>4.2 Full multi-head attention</h3>
+        <div class="theorem">
+            <strong>Theorem (Full MHA ECC).</strong> Consider multi-head attention with $H$ heads evaluated on input
+            sequences of length $n \ge 2$. Then:
+            $$\boxed{\mathrm{ECC}_{\mathrm{Attn}} = H\big[d_h(2d-d_h) + d_v(2d-d_v)\big].}$$
+            Under the standard partition $d = Hd_h = Hd_v$:
+            $$\boxed{\mathrm{ECC}_{\mathrm{Attn}} = 4d^2 - \frac{2d^2}{H}.}$$
+        </div>
+
+        <h3>4.3 ReLU feed-forward networks</h3>
+        <div class="theorem">
+            <strong>Theorem (FFN ECC).</strong> Consider a one-hidden-layer ReLU network $f(x) = W_2 \sigma(W_1 x)$ with
+            $d \ge 2$. Then:
+            $$\boxed{\mathrm{ECC}_{\mathrm{FFN}} = m(2d-1).}$$
+            For the standard transformer choice $m = 4d$:
+            $$\boxed{\mathrm{ECC}_{\mathrm{FFN}} = 8d^2 - 4d.}$$
+        </div>
+        <div class="proof">
+            <span class="proof-label">Proof sketch.</span> Each hidden neuron has a one-dimensional positive-scaling
+            gauge (ReLU homogeneity), giving $m$ kernel directions. In function space, distributional jumps across
+            activation hyperplanes isolate each neuron separately, forcing the generic kernel to be exactly
+            $m$-dimensional: $\mathrm{ECC} = 2md - m = m(2d-1)$. ∎
+        </div>
+
+        <h3>4.4 Multi-layer composition</h3>
+        <div class="proposition">
+            <strong>Proposition (General composition formula).</strong> At any regular parameter point $\theta$:
+            $$\boxed{\mathrm{ECC}_{\mathrm{total}}(\theta) = \dim\big(\mathcal{S}_1(\theta) + \cdots +
+            \mathcal{S}_L(\theta)\big).}$$
+        </div>
+        <p>Exact additivity ($= \sum \mathrm{ECC}_l$) holds if and only if the transported tangent spaces form a direct
+            sum. Three counterexamples (smooth linear, ReLU residual, attention at $T=1$) show that additivity failure
+            is a fundamental phenomenon, not a pathology.</p>
+
+        <h3>4.5 Mamba and selective state-space models</h3>
+        <div class="theorem">
+            <strong>Theorem (Mamba ECC).</strong> For a standard Mamba-style block with defaults $m=2d$, $N=16$, $k=4$,
+            $r=\lceil d/16\rceil$:
+            $$\boxed{\mathrm{ECC}_{\mathrm{Mamba}} = 6.25d^2 + O(d).}$$
+        </div>
+
+        <h3>4.6 Architectural comparison</h3>
+        <table>
+            <tr>
+                <th>Architecture</th>
+                <th>ECC (no bias)</th>
+                <th>Standard width formula</th>
+                <th>Compute scale</th>
+            </tr>
+            <tr>
+                <td>Attention ($H$ heads)</td>
+                <td>$H[d_h(2d-d_h)+d_v(2d-d_v)]$</td>
+                <td>$4d^2 - 2d^2/H$</td>
+                <td>$O(n^2 d)$</td>
+            </tr>
+            <tr>
+                <td>FFN (ReLU, width $m$)</td>
+                <td>$m(2d-1)$</td>
+                <td>$8d^2 - 4d$ for $m=4d$</td>
+                <td>$O(nd^2)$</td>
+            </tr>
+            <tr>
+                <td>Transformer block</td>
+                <td>$\le \mathrm{ECC}_{\mathrm{Attn}} + \mathrm{ECC}_{\mathrm{FFN}}$</td>
+                <td>$\le 12d^2 - 2d^2/H - 4d$</td>
+                <td>$O(n^2d + nd^2)$</td>
+            </tr>
+            <tr>
+                <td>Mamba block</td>
+                <td>$3dm + m(k+3N+2r+3) - r^2 - N$</td>
+                <td>$6.25d^2 + O(d)$</td>
+                <td>$O(nd^2)$</td>
+            </tr>
+        </table>
+
+
+        <!-- ===== 5. Intelligence Decomposition ===== -->
+        <h2>5. Intelligence as Capacity Times Utilization</h2>
+
+        <h3>5.1 Master equation</h3>
+        <div class="definition">
+            <strong>Definition (Task intelligence).</strong>
+            $$\boxed{\mathrm{Intelligence}(T) = \mathrm{ECC} \cdot \bar\tau_\Sigma, \qquad \bar\tau_\Sigma :=
+            \tau_{\mathrm{rep}} \tau_{\mathrm{stat}} \tau_{\mathrm{opt}}.}$$
+        </div>
+        <p>This is a functional, task-relative definition: how much of the architecture's ceiling is aligned to the
+            task, statistically identified, and actually realized by optimization.</p>
+
+        <h3>5.2 Utilization factorization</h3>
+        <div class="proposition">
+            <strong>Proposition.</strong> Let $k_{\mathrm{use}}$ = usable task-aligned dimension, $k_{\mathrm{obs}}$ =
+            portion identifiable from data, $k_{\mathrm{reached}}$ = portion reached by optimizer. Define:
+            $$\tau_{\mathrm{rep}} := \frac{k_{\mathrm{use}}}{\mathrm{ECC}}, \quad \tau_{\mathrm{stat}} :=
+            \frac{k_{\mathrm{obs}}}{k_{\mathrm{use}}}, \quad \tau_{\mathrm{opt}} :=
+            \frac{k_{\mathrm{reached}}}{k_{\mathrm{obs}}}.$$
+            Then $\bar\tau_\Sigma = k_{\mathrm{reached}} / \mathrm{ECC}$.
+        </div>
+
+        <h3>5.3 The pullback task metric</h3>
+        <p>The canonical local object is the pullback task metric:</p>
+        <div class="boxed">$$M_T(\theta^*) = J_*^\top G_T J_* = \Psi^* g_T$$</div>
+        <p>Its effective rank gives the operational $k_{\mathrm{use}}$, and $\tau_{\mathrm{rep}} = k_{\mathrm{use}} /
+            \mathrm{ECC}$ is the representational efficiency — the fraction of architectural capacity genuinely usable
+            for the task.</p>
+
+        <h3>5.4 Practical levers</h3>
+        <table>
+            <tr>
+                <th>Intervention</th>
+                <th>Primary effect</th>
+                <th>Interpretation</th>
+            </tr>
+            <tr>
+                <td>Scale width/depth</td>
+                <td>$\mathrm{ECC} \uparrow$</td>
+                <td>raises the ceiling</td>
+            </tr>
+            <tr>
+                <td>Architecture redesign</td>
+                <td>$\tau_{\mathrm{rep}} \uparrow$</td>
+                <td>improves task alignment</td>
+            </tr>
+            <tr>
+                <td>Better data</td>
+                <td>$\tau_{\mathrm{stat}} \uparrow$</td>
+                <td>identifies more aligned directions</td>
+            </tr>
+            <tr>
+                <td>Better optimization</td>
+                <td>$\tau_{\mathrm{opt}} \uparrow$</td>
+                <td>reaches more of what data supports</td>
+            </tr>
+            <tr>
+                <td>LoRA / fine-tuning / RLHF</td>
+                <td>mostly $\tau_{\mathrm{rep}} \uparrow$</td>
+                <td>reallocates usable directions</td>
+            </tr>
+            <tr>
+                <td>Distillation / pruning</td>
+                <td>$\mathrm{ECC} \downarrow$ with $\tau$ preserved</td>
+                <td>compresses the useful subspace</td>
+            </tr>
+        </table>
+
+
+        <!-- ===== 6. Bridge Problem ===== -->
+        <h2>6. Conditional Coding Theorem and the Bridge Problem</h2>
+
+        <h3>6.1 Conditional coding theorem</h3>
+        <div class="theorem">
+            <strong>Theorem (Conditional coding theorem).</strong> Under standard smoothness and covering-number
+            assumptions, the learned predictor obeys:
+            $$\mathbb{E}\|\hat f_{k,n} - f^*\|_{L^2}^2 \;\lesssim\; C_1 k^{-2\beta/d_{\mathrm{data}}} + C_2 \frac{k \log
+            n}{n} + \delta_{\mathrm{opt}}.$$
+        </div>
+
+        <h3>6.2 Why a purely static bridge fails</h3>
+        <p>Four counterexamples show that ECC alone cannot predict approximation quality:</p>
+        <ol>
+            <li><strong>Rank does not imply approximation.</strong> An analytic full-rank polynomial family
+                $\Psi(\theta)(x) = \sum \theta_j x^j$ has full Jacobian rank $P$, but cannot approximate the constant
+                function $1$ ($\Psi(\theta)(0) = 0$ always).</li>
+            <li><strong>Global universality ≠ local aligned approximation.</strong> Universal approximation is a global
+                existence statement; the bridge requires good approximants in a local aligned slice.</li>
+            <li><strong>$M_T$-optimal slices need not be approximation-optimal.</strong> The variance-maximizing
+                eigenspace may differ from the bias-reducing direction.</li>
+            <li><strong>Dormant-neuron trap.</strong> A neuron with tiny outer weight $a_i \approx 0$ is invisible to
+                $M_T$ but may contain crucial inner-weight structure.</li>
+        </ol>
+
+        <h3>6.3 The correct local bridge: residual tails</h3>
+        <div class="definition">
+            <strong>Definition (Pullback task metric).</strong>
+            $$\boxed{M_T(\theta^*) := J_*^\top G_T J_*.}$$
+        </div>
+        <div class="definition">
+            <strong>Definition (Aligned residual tail).</strong>
+            $$\eta_T(k) := \inf_{\delta \in V_{T,k},\; \|\delta\| \le r_k} \|e_T - J_* \delta\|_{G_T}.$$
+        </div>
+        <div class="theorem">
+            <strong>Theorem (Local aligned approximation bridge).</strong> The aligned local approximation error
+            satisfies:
+            $$\frac{1}{2}\Big(\eta_T(k) - \frac{1}{2}M_2 r_k^2\Big)_+^2 \le A_T^{\mathrm{loc}}(k) \le
+            \frac{1}{2}\Big(\eta_T(k) + \frac{1}{2}M_2 r_k^2\Big)^2.$$
+        </div>
+
+        <h3>6.4 Six-term decomposition</h3>
+        <div class="boxed">
+            $$\mathcal{U}_T(k) = \beta_{\mathrm{exist}}(k) + \Gamma_{\mathrm{curv}}(k) + \Gamma_{\mathrm{sel}}(k) +
+            \Gamma_{\mathrm{act}}(B,k) + C_{\mathrm{gen}}\frac{k}{n} + \delta_{\mathrm{opt}}$$
+        </div>
+        <p>The six terms separate existence, geometry, selection, reachability, generalization, and optimization errors.
+            ECC bounds the ambient range of $k$ ($k \le \mathrm{ECC}$) — it is a resource ceiling, analogous to channel
+            capacity in information theory.</p>
+
+
+        <!-- ===== 7. Framework in Action ===== -->
+        <h2>7. Framework in Action</h2>
+
+        <h3>7.1 Capacity geometry explains architectural phenomena</h3>
+        <ul>
+            <li><strong>Bilinear attention is Pareto-optimal</strong> on the score side among degree-≤2 score families.
+            </li>
+            <li><strong>Sparse attention</strong>: when $n \gg d$, most pairwise token relations cannot be independently
+                controlled ($d_h^2 / n^2 \approx 10^{-6}$ for $d_h=128$, $n=131072$).</li>
+            <li><strong>LoRA as low-dimensional geometry</strong>: a rank-$r$ adapter on an $m \times n$ matrix accesses
+                $r(m+n-r)$ directions, not $r$ directions.</li>
+            <li><strong>Catastrophic forgetting</strong> is governed by subspace geometry ($\dim(U_1 + U_2)$, principal
+                angles, optimization conflict), not just the scalar sum of task dimensions.</li>
+        </ul>
+
+        <h3>7.2 Intelligence decomposition explains training dynamics</h3>
+        <ul>
+            <li><strong>Self-training is a fixed point</strong>: by the data-processing inequality, $I(D_{\mathrm{syn}};
+                Y^*) \le I(D_{\mathrm{orig}}; Y^*)$, so self-MLE cannot improve $\tau_{\mathrm{stat}}$.</li>
+            <li><strong>Architecture screening</strong>: compare candidates by $(\mathrm{ECC},
+                \mathrm{ECC}/\mathrm{FLOP}, \text{expected } \tau_{\mathrm{rep}})$ before training.</li>
+            <li><strong>Emergence as threshold crossing</strong>: smooth growth in $k_{\mathrm{eff}}$ produces abrupt
+                accuracy jumps when $k_{\mathrm{eff}} \gtrsim k(T)$.</li>
+            <li><strong>Workload-aware compression</strong>: preserve the leading eigenspace of $M_W = \sum_i w_i
+                M_{T_i}$.</li>
+        </ul>
+
+
+        <!-- ===== 8. Future Directions ===== -->
+        <h2>8. Future Directions in Architectural Design</h2>
+
+        <h3>Complex-valued and quaternionic attention</h3>
+        <p>For an unconstrained complex bilinear score kernel on a $d_h$-dimensional complex head space:</p>
+        <div class="boxed">$$\mathrm{ECC}_{\mathbb{C}} = 2 d_h^2$$</div>
+        <p>More generally, $\mathrm{ECC}_{\mathbb{A}} = (\dim_\mathbb{R} \mathbb{A}) \cdot d_h^2$ for $\mathbb{A} \in
+            \{\mathbb{R}, \mathbb{C}, \mathbb{H}\}$.</p>
+
+        <h3>No universal representational optimum</h3>
+        <div class="theorem">
+            <strong>Theorem (No universal τ_rep optimum).</strong> If two architectures $A_1, A_2$ exchange their
+            efficiency ordering across two domains $D_1, D_2$ (each wins on its matched domain), then no single
+            architecture maximizes expected representational efficiency for every probability distribution on $\{D_1,
+            D_2\}$.
+        </div>
+
+        <h3>A Shannon-style roadmap</h3>
+        <table>
+            <tr>
+                <th>Coding-theory milestone</th>
+                <th>AI analogue</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>Shannon capacity</td>
+                <td>ECC as capacity ceiling</td>
+                <td>established here</td>
+            </tr>
+            <tr>
+                <td>Rate-distortion tools</td>
+                <td>$\tau$ decomposition and $\eta_T(k)$ diagnostics</td>
+                <td>established here</td>
+            </tr>
+            <tr>
+                <td>Turbo / LDPC era</td>
+                <td>Optimization methods driving $\tau_{\mathrm{opt}} \to 1$</td>
+                <td>open</td>
+            </tr>
+            <tr>
+                <td>Constructive polar coding</td>
+                <td>Architectures with $\tau_{\mathrm{rep}} \approx 1$ by design</td>
+                <td>grand challenge</td>
+            </tr>
+        </table>
+
+
+        <!-- ===== 9. Numerical Illustrations ===== -->
+        <h2>9. Numerical Illustrations</h2>
+        <p>Three small-scale experiments verify that the mathematical objects ($\eta_T(k)$, eigenvalue spectra, aligned
+            slices) are computable and carry empirically detectable signal:</p>
+        <ol>
+            <li><strong>α-crossover validation</strong>: In teacher-student (digits, MLP), prediction accuracy 43/60 =
+                71.7% ($p = 5.33 \times 10^{-4}$). On GPT-2 (layer-11 attention, ~590K params), accuracy 7/7 = 100% ($p
+                = 0.0078$).</li>
+            <li><strong>GPT-2 subspace intervention</strong>: $|c_i|^2$-guided selector wins 6/8 domains. Spearman
+                correlation between energy gap and improvement: $r_s = 0.786$, $p = 0.021$.</li>
+            <li><strong>Local bridge bound verification</strong>: $\eta_T(k)$ achieves 0/40 bound violations with mean
+                prediction error &lt; 0.25% in both $G_T = I$ and $G_T \neq I$ settings.</li>
+        </ol>
+
+
+        <!-- ===== 10. Discussion ===== -->
+        <h2>10. Related Work and Discussion</h2>
+
+        <h4>Does scaling alone imply AGI?</h4>
+        <p>Scaling raises ECC, so it genuinely raises the ceiling. But if $\tau_{\mathrm{rep}}, \tau_{\mathrm{stat}},
+            \tau_{\mathrm{opt}}$ remain bounded away from one, gains can be slow. The equation
+            $\mathrm{ECC}_{\mathrm{req}}(I^*) = I^* / (\tau_{\mathrm{rep}} \tau_{\mathrm{stat}} \tau_{\mathrm{opt}})$
+            shows poor utilization forces much larger capacity.</p>
+
+        <h4>Are large language models just parrots?</h4>
+        <p>The framework turns a binary debate into a spectrum. High coverage with low efficiency = "parroting." High
+            efficiency = capacity aligned with latent task structure. Most systems lie between these extremes.</p>
+
+        <h4>Transformer versus Mamba</h4>
+        <p>Transformers can have larger single-block ECC, while Mamba is stronger in ECC-per-compute on long sequences.
+            The right question is which task distribution benefits more from random access vs. streaming.</p>
+
+
+        <!-- ===== 11. Conclusion ===== -->
+        <h2>11. Conclusion</h2>
+        <p>This paper develops an information-theoretic view of AI architecture in which the central capacity object is
+        </p>
+        <div class="boxed">$$\mathrm{ECC}(\Psi) = \mathrm{rank}_{\mathrm{gen}}(D\Psi).$$</div>
+        <p>The quantity is the <em>unique</em> invariant satisfying equivalence-invariance, additivity, and
+            normalization. It counts functional freedom rather than storage size. Task performance is governed by</p>
+        <div class="boxed">$$\mathrm{Intelligence}(T) = \mathrm{ECC} \cdot \tau_{\mathrm{rep}} \tau_{\mathrm{stat}}
+            \tau_{\mathrm{opt}}.$$</div>
+        <p>The product $\mathrm{ECC} \cdot \tau_{\mathrm{rep}}$ is exactly the usable task-aligned dimension. The
+            pullback task metric $M_T = J_*^\top G_T J_*$ is the canonical local object, and its residual $\eta_T(k)$
+            provides a measurable local bridge from geometry to approximation error.</p>
+
+        <p>The slogan: Paper A defined the ceiling. This paper makes precise how much of the ceiling is used, why the
+            unused part matters, and why alignment, not raw block capacity, is the deeper bottleneck.</p>
+
+
+        <!-- ===== References ===== -->
+        <h2>References</h2>
+        <ol>
+            <li><a href="paper_a.html">The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem</a>. Zenodo,
+                DOI: <a href="https://doi.org/10.5281/zenodo.18842724">10.5281/zenodo.18842724</a>.</li>
+            <li>Henry, Marchetti, Kohn. "Geometry of Lightning Self-Attention: Identifiability and Dimension." ICLR
+                2025.</li>
+            <li>Grigsby, Lindsey, Rolnick. "Hidden Symmetries of ReLU Networks." ICML 2023.</li>
+            <li>Havrilla, Liao. "Understanding Scaling Laws with Statistical and Approximation Theory for Transformer
+                Neural Networks." NeurIPS 2024.</li>
+            <li>Kaplan et al. "Scaling Laws for Neural Language Models." arXiv:2001.08361, 2020.</li>
+            <li>Hoffmann et al. "Training Compute-Optimal Large Language Models." NeurIPS 2022.</li>
+            <li>Hu et al. "LoRA: Low-Rank Adaptation of Large Language Models." ICLR 2022.</li>
+            <li>Aghajanyan, Zettlemoyer, Gupta. "Intrinsic Dimensionality Explains the Effectiveness of Language Model
+                Fine-Tuning." ACL 2021.</li>
+            <li>Li et al. "Measuring the Intrinsic Dimension of Objective Landscapes." ICLR 2018.</li>
+            <li>Barron. "Universal Approximation Bounds for Superpositions of a Sigmoidal Function." IEEE Trans. IT,
+                1993.</li>
+            <li>Vaswani et al. "Attention Is All You Need." NeurIPS 2017.</li>
+            <li>Gu, Dao. "Mamba: Linear-Time Sequence Modeling with Selective State Spaces." arXiv:2312.00752, 2024.
+            </li>
+        </ol>
+
+        <p style="margin-top:3rem; color: var(--muted); font-size: 0.85rem; text-align: center;">
+            © 2026 Hyeong Rok Lee · <a href="mailto:rok@gahyeon.net">rok@gahyeon.net</a> · <a href="/">Home</a>
+        </p>
+
+    </div>
 </body>
 
 </html>
