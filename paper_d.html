@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="esED81cLkhXtqoloRlvSAtnYPkHvSsup-XjL_yLTawk" />
+    <title>Consensus-Target Linear Shrinkage — Hyeong Rok Lee</title>
+
+    <!-- Google Scholar meta tags -->
+    <meta name="citation_title"
+        content="Consensus-Target Linear Shrinkage: The Geometry of In-Context Learning in the Gradient-Gram Space">
+    <meta name="citation_author" content="Lee, Hyeong Rok">
+    <meta name="citation_date" content="2026/03">
+    <meta name="citation_publication_date" content="2026/03/06">
+    <meta name="citation_online_date" content="2026/03/06">
+    <meta name="citation_pdf_url" content="https://hyeongrok91-collab.github.io/paper_d.pdf">
+    <meta name="citation_doi" content="10.5281/zenodo.18883406">
+    <meta name="citation_language" content="en">
+    <meta name="citation_keywords"
+        content="in-context learning; gradient-Gram space; linear shrinkage; effective rank; cone law; adaptation geometry; consensus target">
+
+    <meta name="description"
+        content="ICL performs consensus-target linear shrinkage on the gradient-Gram matrix: G^P = α_P J + (1−α_P) G^r. Cross-model validation on 8 architectures. Adaptation Cone Law on constant-ECC leaves.">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Consensus-Target Linear Shrinkage — Hyeong Rok Lee">
+    <meta property="og:description"
+        content="The geometry of in-context learning: consensus-target shrinkage in gradient-Gram space. α_P as the master variable of ICL.">
+    <meta property="og:url" content="https://hyeongrok91-collab.github.io/paper_d.html">
+    <meta property="og:image" content="https://hyeongrok91-collab.github.io/og-image.png">
+    <meta property="og:site_name" content="Hyeong Rok Lee Research">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Consensus-Target Linear Shrinkage — Hyeong Rok Lee">
+    <meta name="twitter:description"
+        content="ICL = consensus-target shrinkage. α_P governs compression with R² > 0.98. Verified across 8 architectures.">
+    <meta name="twitter:image" content="https://hyeongrok91-collab.github.io/og-image.png">
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f5f0e8;
+            --fg: #2c2420;
+            --muted: #8c8078;
+            --accent: #5b4636;
+            --border: #d0c8bc;
+            --card: #ebe4d8;
+            --theorem-bg: #ebe4d8;
+            --proof-bg: #f0ebe2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.8rem;
+            margin: 0 0 0.3rem;
+            line-height: 1.3;
+            color: var(--fg);
+        }
+
+        h2 {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.4rem;
+            margin: 2.5rem 0 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 1.8rem 0 0.7rem;
+            color: var(--accent);
+        }
+
+        h4 {
+            font-size: 1rem;
+            margin: 1.2rem 0 0.5rem;
+        }
+
+        p {
+            margin: 0 0 1rem;
+            color: var(--fg);
+        }
+
+        .meta {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--fg);
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            background: var(--card);
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .theorem,
+        .definition,
+        .proposition,
+        .remark,
+        .example,
+        .corollary,
+        .assumption {
+            background: var(--theorem-bg);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .theorem strong,
+        .definition strong,
+        .proposition strong,
+        .example strong,
+        .corollary strong,
+        .assumption strong {
+            color: var(--accent);
+        }
+
+        .proof {
+            background: var(--proof-bg);
+            border-left: 3px solid var(--border);
+            border-radius: 4px;
+            padding: 0.8rem 1.2rem;
+            margin: 0.8rem 0;
+            font-size: 0.95rem;
+        }
+
+        .proof-label {
+            font-style: italic;
+            color: var(--muted);
+        }
+
+        .remark {
+            border-left-color: var(--muted);
+        }
+
+        .remark strong {
+            color: var(--muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 0.5rem 0.7rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: var(--card);
+            color: var(--accent);
+        }
+
+        ul,
+        ol {
+            margin: 0 0 1rem 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.3rem;
+        }
+
+        .boxed {
+            background: var(--card);
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+            text-align: center;
+        }
+
+        .back {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.2rem 0;
+        }
+
+        blockquote {
+            border-left: 3px solid var(--muted);
+            padding: 0.5rem 1rem;
+            margin: 1rem 0;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ScholarlyArticle",
+      "name": "Consensus-Target Linear Shrinkage: The Geometry of In-Context Learning in the Gradient-Gram Space",
+      "headline": "Consensus-Target Linear Shrinkage: The Geometry of In-Context Learning in the Gradient-Gram Space",
+      "author": {"@type": "Person", "name": "Hyeong Rok Lee", "email": "rok@gahyeon.net"},
+      "datePublished": "2026-03-06",
+      "description": "ICL performs consensus-target linear shrinkage on the gradient-Gram matrix. Cross-model validation on 8 architectures confirms the law.",
+      "url": "https://hyeongrok91-collab.github.io/paper_d.html",
+      "sameAs": "https://doi.org/10.5281/zenodo.18883406",
+      "keywords": ["in-context learning", "gradient-Gram space", "linear shrinkage", "effective rank", "cone law"],
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "encoding": {"@type": "MediaObject", "contentUrl": "https://hyeongrok91-collab.github.io/paper_d.pdf", "encodingFormat": "application/pdf"}
+    }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+
+        <p class="back"><a href="/">← Back to all publications</a></p>
+
+        <h1>Consensus-Target Linear Shrinkage: The Geometry of In-Context Learning in the Gradient-Gram Space</h1>
+        <div class="meta">Hyeong Rok Lee · March 2026 · Preprint</div>
+        <a class="btn" href="paper_d.pdf">📄 PDF</a>
+        <a class="btn" href="https://doi.org/10.5281/zenodo.18883406">🔗 DOI</a>
+
+        <!-- ===== Abstract ===== -->
+        <h2>Abstract</h2>
+        <p>In-context learning (ICL) is widely observed to improve language model performance by providing task examples
+            in the prompt, yet a precise mathematical characterization of <em>what ICL does</em> to the model's internal
+            geometry remains open. Under a shared-component decomposition, ICL performs <strong>consensus-target linear
+                shrinkage</strong> on the task-gradient Gram matrix:</p>
+        <div class="boxed">$$G^P = \alpha_P\, J + (1-\alpha_P)\,G^r, \qquad \alpha_P = \frac{\|a_P\|^2}{\|a_P\|^2 +
+            r^2},$$</div>
+        <p>where $G^P$ and $G^r$ are the gradient-cosine Gram matrices with and without prefix, $J$ is the all-ones
+            consensus target, and $\alpha_P \in [0,1]$ is the <em>adaptation parameter</em>. This identity implies an
+            <strong>Orthogonal Contraction Law</strong>: the non-consensus geometry contracts by exactly $(1-\alpha_P)$,
+            and an <strong>Effective-Rank Bound</strong>: $\mathrm{erank}(G^P) \le
+            \exp(h(\alpha_P))\cdot(n-1)^{1-\alpha_P}$.
+        </p>
+        <p>A 65-point sweep across 5 tasks confirms that compression ratio is a near-deterministic function of
+            $\alpha_P$ (per-task $R^2 > 0.98$), establishing $\alpha_P$ as the <em>master variable</em> of ICL.
+            Cross-model validation on 8 architectures (GPT-2 to Phi-2, 117M–2.7B parameters, 2019–2025) shows prediction
+            error below 3% in all cases.</p>
+        <p>Combined with the intelligence decomposition of Paper B, $\alpha_P$ governs the compression law
+            ($\Delta\tau_{\mathrm{rep}}$), while the task-dependent quality factor $Q$ governs the variable reward
+            ($\Delta Q$). Together they yield the <strong>Adaptation Cone Law</strong> on constant-ECC leaves,
+            constraining intelligence-improving adaptations to a geometric cone in the
+            $(\Delta\log\tau_{\mathrm{rep}},\, \Delta\log Q)$ plane.</p>
+
+
+        <!-- ===== 1. Introduction ===== -->
+        <h2>1. Introduction</h2>
+
+        <h3>1.1 Context and motivation</h3>
+        <p>In-context learning—the ability of large language models to improve on a task when provided with input–output
+            examples in the prompt—is one of the most striking emergent capabilities of modern AI. Despite extensive
+            study, the field lacks a quantitative law describing <em>what ICL does</em> to the model's internal
+            computational geometry.</p>
+        <p>This paper proposes such a law. We work in the <strong>gradient-Gram space</strong>: for a set of $n$ task
+            inputs, we compute per-input gradients of the loss and form their cosine-similarity Gram matrix. This object
+            encodes how "aligned" the model's responses are across different inputs.</p>
+
+        <h3>1.2 The three papers</h3>
+        <table>
+            <tr>
+                <th>Paper</th>
+                <th>Known Computation</th>
+                <th>Mathematical Structure</th>
+                <th>Core Result</th>
+            </tr>
+            <tr>
+                <td><a href="paper_a.html">A</a></td>
+                <td>Attention = softmax$(QK^\top)V$</td>
+                <td>Euclidean bipartite matching</td>
+                <td>$\mathrm{rank}(\nabla M) = d^2$</td>
+            </tr>
+            <tr>
+                <td><a href="paper_b.html">B</a></td>
+                <td>Loss measures performance</td>
+                <td>Product decomposition</td>
+                <td>$I = \mathrm{ECC} \times \tau$ (unique)</td>
+            </tr>
+            <tr>
+                <td><strong>D (this)</strong></td>
+                <td><strong>ICL = prefix improves perf.</strong></td>
+                <td><strong>Consensus-Target Shrinkage</strong></td>
+                <td>$P_\perp G^P P_\perp = (1-\alpha_P)\, P_\perp G^r P_\perp$</td>
+            </tr>
+        </table>
+        <p>Paper A identified the state space dimension ($d^2$). Paper B established the equation of state ($I =
+            \mathrm{ECC} \cdot \tau_{\mathrm{rep}} \cdot Q$). Paper D discovers the <em>equation of motion</em>: how
+            adaptation changes the state along constant-ECC leaves.</p>
+
+        <h3>1.3 A counter-intuitive discovery</h3>
+        <blockquote>ICL <em>compresses</em> the gradient geometry. The effective rank drops from 2.09 to 1.25
+            (arithmetic task, Qwen3-0.6B). Yet intelligence increases by 201%.</blockquote>
+        <p>The resolution is that compression is not information loss; it is <em>consensus formation</em>. The prefix
+            aligns gradients toward a shared task direction, collapsing diversity in favor of coherence. The quality
+            factor $Q$ (from Paper B) then over-compensates the representational loss.</p>
+
+        <h3>1.4 Contributions</h3>
+        <ol>
+            <li><strong>Conditional Gram Decomposition</strong>: $G^P = \alpha_P J + (1-\alpha_P)G^r$ with typical
+                reconstruction error 1–3%.</li>
+            <li><strong>Orthogonal Contraction Law</strong>: $P_\perp G^P P_\perp = (1-\alpha_P) P_\perp G^r P_\perp$.
+            </li>
+            <li><strong>Effective-Rank Entropy Bound</strong>: $\mathrm{erank}(G^P) \le \exp(h(\alpha_P)) \cdot
+                (n-1)^{1-\alpha_P}$.</li>
+            <li><strong>Master Variable Identification</strong>: $\alpha_P$ predicts compression with per-task $R^2 >
+                0.98$ across 65 conditions.</li>
+            <li><strong>Cross-Model Validation</strong>: The shrinkage law is verified across 8 models spanning 4
+                architecture families.</li>
+            <li><strong>Adaptation Cone Law</strong>: ICL and fine-tuning occupy complementary cones on constant-ECC
+                leaves.</li>
+        </ol>
+
+
+        <!-- ===== 2. Shrinkage Theorem ===== -->
+        <h2>2. Consensus-Target Shrinkage Theorem</h2>
+
+        <h3>2.1 Setup and notation</h3>
+        <p>Fix a pretrained language model with parameters $\theta$ and a target parameter module. Given $n$ task inputs
+            $\{x_1,\ldots,x_n\}$, define:</p>
+        <ul>
+            <li>$u_i^r = \nabla_\theta \mathcal{L}(x_i) / \|\nabla_\theta \mathcal{L}(x_i)\|_2$: the $\ell_2$-normalized
+                gradient without prefix ("raw").</li>
+            <li>$u_i^P = \nabla_\theta \mathcal{L}(\mathrm{prefix} \circ x_i) / \|\nabla_\theta
+                \mathcal{L}(\mathrm{prefix} \circ x_i)\|_2$: the $\ell_2$-normalized gradient with prefix.</li>
+        </ul>
+        <p>The <strong>gradient-Gram matrices</strong> are:</p>
+        $$G^r_{ij} = \langle u_i^r, u_j^r \rangle, \qquad G^P_{ij} = \langle u_i^P, u_j^P \rangle.$$
+        <p>Both are $n \times n$ positive semidefinite matrices with unit diagonal.</p>
+
+        <div class="definition">
+            <strong>Definition (Consensus Target).</strong> $J \in \mathbb{R}^{n \times n}$ is the all-ones matrix:
+            $J_{ij} = 1$ for all $i,j$. This represents perfect consensus—all gradients perfectly aligned.
+        </div>
+
+        <h3>2.2 Conditional Gram decomposition</h3>
+        <div class="theorem">
+            <strong>Theorem (Consensus-Target Linear Shrinkage).</strong> Suppose each prefix gradient decomposes as
+            $$u_i^P = a_P + r_i, \qquad a_P \perp r_i, \qquad \|r_i\| = r \quad \text{(constant)},$$
+            where $a_P$ is the shared consensus component and $r_i$ is the residual, and with the identification
+            $G^r_{ij} = \langle r_i, r_j \rangle / r^2$. For $r > 0$:
+            $$\boxed{G^P = \alpha_P\, J + (1-\alpha_P)\,G^r, \qquad \alpha_P = \frac{\|a_P\|^2}{\|a_P\|^2 + r^2}.}$$
+            When $r = 0$, every $u_i^P = a_P$ is identical, $\alpha_P = 1$, and $G^P = J$.
+        </div>
+        <div class="proof">
+            <span class="proof-label">Proof.</span> Since $\|u_i^P\|^2 = \|a_P\|^2 + r^2 =: s^2$ by orthogonality:
+            $$G^P_{ij} = \langle u_i^P, u_j^P \rangle = \frac{1}{s^2}\big(\|a_P\|^2 + \langle r_i, r_j \rangle\big) =
+            \frac{\|a_P\|^2}{s^2} + \frac{r^2}{s^2} \cdot \frac{\langle r_i, r_j \rangle}{r^2} = \alpha_P \cdot 1 +
+            (1-\alpha_P) \cdot G^r_{ij}.$$
+            In matrix form, $G^P = \alpha_P J + (1-\alpha_P)G^r$. ∎
+        </div>
+
+        <div class="remark">
+            <strong>Remark (Quality of the orthogonality assumption).</strong> The assumption $a_P \perp r_i$ holds
+            approximately. Direct measurement gives:
+        </div>
+        <table>
+            <tr>
+                <th>Task</th>
+                <th>$\max_i|\cos(a_P, r_i)|$</th>
+                <th>CV$(\|r_i\|)$</th>
+                <th>fit error</th>
+            </tr>
+            <tr>
+                <td>factual QA</td>
+                <td>0.037</td>
+                <td>0.048</td>
+                <td>1.5%</td>
+            </tr>
+            <tr>
+                <td>sentiment</td>
+                <td>0.116</td>
+                <td>0.196</td>
+                <td>2.5%</td>
+            </tr>
+            <tr>
+                <td>word analogy</td>
+                <td>0.120</td>
+                <td>0.193</td>
+                <td>4.5%</td>
+            </tr>
+            <tr>
+                <td>arithmetic</td>
+                <td>0.128</td>
+                <td>0.268</td>
+                <td>1.3%</td>
+            </tr>
+            <tr>
+                <td>translation</td>
+                <td>0.294</td>
+                <td>0.257</td>
+                <td>9.1%</td>
+            </tr>
+        </table>
+
+        <h3>2.3 Orthogonal Contraction Law</h3>
+        <div class="theorem">
+            <strong>Theorem (Orthogonal Contraction).</strong> Let $u = \frac{1}{\sqrt{n}}\mathbf{1}$ and $P_\perp = I -
+            uu^\top$. Then:
+            $$\boxed{P_\perp G^P P_\perp = (1-\alpha_P) \cdot P_\perp G^r P_\perp.}$$
+        </div>
+        <div class="proof">
+            <span class="proof-label">Proof.</span> Since $P_\perp J P_\perp = P_\perp(n\,uu^\top)P_\perp = n(P_\perp
+            u)(u^\top P_\perp) = 0$:
+            $$P_\perp G^P P_\perp = P_\perp\big[\alpha_P J + (1-\alpha_P)G^r\big]P_\perp = \alpha_P \cdot 0 +
+            (1-\alpha_P) P_\perp G^r P_\perp = (1-\alpha_P) P_\perp G^r P_\perp. \qquad \square$$
+        </div>
+        <div class="remark">
+            <strong>Remark (Physical Interpretation).</strong> The consensus direction $\mathbf{1}/\sqrt{n}$ absorbs the
+            "shared signal." Everything orthogonal to it—the entire non-consensus geometry—contracts by the factor
+            $(1-\alpha_P)$. At $\alpha_P = 0.966$, only 3.4% of the original structure survives.
+        </div>
+
+        <h3>2.4 Effective-Rank Entropy Bound</h3>
+        <div class="corollary">
+            <strong>Corollary (Entropy Bound on Effective Rank).</strong> Under the cumulative-overlap condition $\eta_k
+            \ge s_k$ for all $k < n$, the Ky Fan variational principle implies: $$\boxed{\mathrm{erank}(G^P) \le
+                \exp(h(a)) \cdot (n-1)^{1-a},}$$ where $a=p_1^P=\lambda_1(G^P)/n$ and $h(a)=-a\log a - (1-a)\log(1-a)$
+                is the binary entropy. </div>
+
+                <h3>2.5 Cross-model validation</h3>
+                <table>
+                    <tr>
+                        <th>Model</th>
+                        <th>Size</th>
+                        <th>Year</th>
+                        <th>$\alpha_P$</th>
+                        <th>Pred. Error</th>
+                        <th>erank (raw→prefix)</th>
+                    </tr>
+                    <tr>
+                        <td>GPT-2</td>
+                        <td>117M</td>
+                        <td>2019</td>
+                        <td>0.902</td>
+                        <td>1.3%</td>
+                        <td>5.26 → 1.36</td>
+                    </tr>
+                    <tr>
+                        <td>GPT-2 medium</td>
+                        <td>345M</td>
+                        <td>2019</td>
+                        <td>0.924</td>
+                        <td>1.3%</td>
+                        <td>6.16 → 1.32</td>
+                    </tr>
+                    <tr>
+                        <td>Qwen2.5-0.5B</td>
+                        <td>500M</td>
+                        <td>2024</td>
+                        <td>0.932</td>
+                        <td>1.4%</td>
+                        <td>4.21 → 1.23</td>
+                    </tr>
+                    <tr>
+                        <td>Qwen3-0.6B</td>
+                        <td>600M</td>
+                        <td>2025</td>
+                        <td>0.846</td>
+                        <td>1.3%</td>
+                        <td>2.11 → 1.15</td>
+                    </tr>
+                    <tr>
+                        <td>TinyLlama</td>
+                        <td>1.1B</td>
+                        <td>2023</td>
+                        <td>0.895</td>
+                        <td>1.7%</td>
+                        <td>4.71 → 1.36</td>
+                    </tr>
+                    <tr>
+                        <td>DeepSeek-R1-Distill</td>
+                        <td>1.5B</td>
+                        <td>2025</td>
+                        <td>0.824</td>
+                        <td>0.7%</td>
+                        <td>2.16 → 1.23</td>
+                    </tr>
+                    <tr>
+                        <td>SmolLM2</td>
+                        <td>1.7B</td>
+                        <td>2024</td>
+                        <td>0.904</td>
+                        <td>1.6%</td>
+                        <td>4.39 → 1.34</td>
+                    </tr>
+                    <tr>
+                        <td>Phi-2</td>
+                        <td>2.7B</td>
+                        <td>2023</td>
+                        <td>0.844</td>
+                        <td>2.6%</td>
+                        <td>6.49 → 1.78</td>
+                    </tr>
+                </table>
+                <p>The universality is structural rather than merely empirical breadth: once the shared-component
+                    decomposition $u_i^P = a_P + r_i$ holds, the affine law follows algebraically and does not depend on
+                    architecture-specific details.</p>
+
+
+                <!-- ===== 3. Master Variable ===== -->
+                <h2>3. $\alpha_P$ as the Master Variable of ICL</h2>
+
+                <h3>3.1 Large-scale sweep</h3>
+                <p>A systematic sweep on Qwen3-0.6B across 5 tasks × 13 prefix conditions = 65 data points. Prefix
+                    conditions vary the number of in-context examples (0 to 20) and include irrelevant and adversarial
+                    prefixes.</p>
+
+                <h3>3.2 Compression law</h3>
+                <p>The compression ratio $c = \mathrm{erank}(G^P)/\mathrm{erank}(G^r)$ is a near-deterministic function
+                    of $\alpha_P$:</p>
+                <table>
+                    <tr>
+                        <th>Task</th>
+                        <th>Linear fit $c = a\cdot\alpha_P + b$</th>
+                        <th>$R^2$</th>
+                    </tr>
+                    <tr>
+                        <td>arithmetic</td>
+                        <td>$-0.322\alpha_P + 0.818$</td>
+                        <td>0.986</td>
+                    </tr>
+                    <tr>
+                        <td>factual QA</td>
+                        <td>$-0.558\alpha_P + 0.933$</td>
+                        <td>1.000</td>
+                    </tr>
+                    <tr>
+                        <td>sentiment</td>
+                        <td>$-0.573\alpha_P + 0.939$</td>
+                        <td>1.000</td>
+                    </tr>
+                    <tr>
+                        <td>translation</td>
+                        <td>$-0.584\alpha_P + 0.858$</td>
+                        <td>0.999</td>
+                    </tr>
+                    <tr>
+                        <td>word analogy</td>
+                        <td>$-0.753\alpha_P + 0.909$</td>
+                        <td>0.997</td>
+                    </tr>
+                </table>
+
+                <h3>3.3 Task-dependent reward: the role of $Q$</h3>
+                <table>
+                    <tr>
+                        <th>Task</th>
+                        <th>$\Delta I / \Delta\tau_{\mathrm{rep}}$ slope</th>
+                        <th>Interpretation</th>
+                    </tr>
+                    <tr>
+                        <td>factual QA</td>
+                        <td>127.5</td>
+                        <td>highest $Q$ compensation</td>
+                    </tr>
+                    <tr>
+                        <td>arithmetic</td>
+                        <td>105.3</td>
+                        <td>high $Q$ compensation</td>
+                    </tr>
+                    <tr>
+                        <td>sentiment</td>
+                        <td>66.1</td>
+                        <td>moderate</td>
+                    </tr>
+                    <tr>
+                        <td>translation</td>
+                        <td>59.7</td>
+                        <td>low</td>
+                    </tr>
+                    <tr>
+                        <td>word analogy</td>
+                        <td>31.5</td>
+                        <td>lowest $Q$ compensation</td>
+                    </tr>
+                </table>
+
+                <h3>3.4 The D×B resolution</h3>
+                $$\Delta \log I = \underbrace{\Delta \log \tau_{\mathrm{rep}}}_{\text{D explains (universal)}} +
+                \underbrace{\Delta \log Q}_{\text{B explains (task-dependent)}}.$$
+                <p>Paper D provides the <em>compression law</em>: $\Delta\tau_{\mathrm{rep}} = g(\alpha_P)$ with $R^2 >
+                    0.98$. Paper B provides the <em>task-dependent quality law</em>: $\Delta Q$ varies with task
+                    structure. Together they account for $\Delta I$.</p>
+
+
+                <!-- ===== 4. Cone Law ===== -->
+                <h2>4. Adaptation Cone Law</h2>
+
+                <h3>4.1 Constant-ECC leaves</h3>
+                <p>Empirically, ECC is invariant under both ICL and fine-tuning to machine precision ($\mathrm{CV} <
+                        10^{-4}$). On a constant-ECC leaf, the state is described by two coordinates:</p>
+                        $$x := \Delta\log\tau_{\mathrm{rep}}, \qquad q := \Delta\log Q.$$
+
+                        <h3>4.2 Compressive-expansive dichotomy</h3>
+                        <div class="theorem">
+                            <strong>Theorem (Adaptation Cone).</strong> The intelligence-improving region $\mathcal{H} =
+                            \{(x,q) : x + q > 0\}$ decomposes as:
+                            $$\mathcal{H} = \mathcal{R}_{\mathrm{comp}} \sqcup \mathcal{I} \sqcup
+                            \mathcal{R}_{\mathrm{exp}},$$
+                        </div>
+                        <table>
+                            <tr>
+                                <th>Sector</th>
+                                <th>Condition</th>
+                                <th>Interpretation</th>
+                            </tr>
+                            <tr>
+                                <td>$\mathcal{R}_{\mathrm{comp}}$</td>
+                                <td>$x < 0$, $q> |x|$</td>
+                                <td>compression + mandatory $Q$ over-compensation</td>
+                            </tr>
+                            <tr>
+                                <td>$\mathcal{R}_{\mathrm{exp}}$</td>
+                                <td>$x > 0$, $x+q > 0$</td>
+                                <td>expansion + $Q$ compensation optional</td>
+                            </tr>
+                            <tr>
+                                <td>$\mathcal{I}$</td>
+                                <td>$x = 0$, $q > 0$</td>
+                                <td>interface (neutral line)</td>
+                            </tr>
+                        </table>
+
+                        <div class="remark">
+                            <strong>Remark (ICL and FT occupy opposite cones).</strong>
+                            <ul>
+                                <li><strong>ICL</strong>: $\dot x \le 0$, $\dot x + \dot q \ge 0$ (compressive,
+                                    reversible, requires $Q$ compensation).</li>
+                                <li><strong>FT</strong>: $\dot x \ge 0$, $\dot x + \dot q \ge 0$ (expansive,
+                                    irreversible, $Q$ sign undetermined).</li>
+                            </ul>
+                        </div>
+
+                        <h3>4.3 Compensation necessity</h3>
+                        <div class="theorem">
+                            <strong>Theorem (Compensation Necessity).</strong> In an ECC-preserving adaptation with
+                            $\Delta\log\tau_{\mathrm{rep}} < 0$ and $\Delta\log I> 0$:
+                                $$\boxed{\Delta\log Q > |\Delta\log\tau_{\mathrm{rep}}|.}$$
+                        </div>
+                        <p>This is the analog of Carnot's constraint: compressive improvement <em>requires</em> quality
+                            over-compensation.</p>
+
+                        <h3>4.4 Synergy bound</h3>
+                        <div class="theorem">
+                            <strong>Theorem (Interaction Decomposition).</strong> For a composed adaptation $F$
+                            consisting of compression $C$ followed by expansion $E$:
+                            $$\Delta_F \log I = \Delta_C \log I + \Delta_E \log I + \Xi,$$
+                            where $\Xi = \frac{1}{2} st\,[X_C, X_E](\log I) + O(\|(s,t)\|^3)$, so $\Xi \neq 0$ whenever
+                            the commutator acts nontrivially on $\log I$.
+                        </div>
+                        <p>Empirically, ICL followed by FT gives different results than FT followed by ICL (overlap $=
+                            0.503$), confirming nonzero $\Xi$ in practice.</p>
+
+
+                        <!-- ===== 5. Dictionary ===== -->
+                        <h2>5. Mathematical Substitution Dictionary</h2>
+                        <table>
+                            <tr>
+                                <th>ICL Operation</th>
+                                <th>Mathematical Name</th>
+                                <th>Classical Analog</th>
+                            </tr>
+                            <tr>
+                                <td>$G^P = \alpha_P J + (1-\alpha_P)G^r$</td>
+                                <td>Linear shrinkage to target</td>
+                                <td>Ledoit–Wolf</td>
+                            </tr>
+                            <tr>
+                                <td>$P_\perp G^P P_\perp = (1-\alpha_P)P_\perp G^r P_\perp$</td>
+                                <td>Orthogonal contraction</td>
+                                <td>Kalman collapse</td>
+                            </tr>
+                            <tr>
+                                <td>$k_{\text{use}}$ bound by $h(\alpha_P)$</td>
+                                <td>Entropy-based rank bound</td>
+                                <td>entropy bound</td>
+                            </tr>
+                            <tr>
+                                <td>$\alpha_P = s^2/(s^2+r^2)$</td>
+                                <td>Mechanism-generated SNR</td>
+                                <td>matched filter</td>
+                            </tr>
+                            <tr>
+                                <td>Prefix removal $\to G^r$</td>
+                                <td>Affine inverse</td>
+                                <td>$(G-\alpha J)/(1-\alpha)$</td>
+                            </tr>
+                        </table>
+
+
+                        <!-- ===== 6. Negative Results ===== -->
+                        <h2>6. Negative Results</h2>
+                        <table>
+                            <tr>
+                                <th>Hypothesis</th>
+                                <th>Outcome</th>
+                                <th>Lesson</th>
+                            </tr>
+                            <tr>
+                                <td>ICL∘FT $=$ FT∘ICL</td>
+                                <td>✗ overlap $= 0.503$</td>
+                                <td>noncommutativity ⇒ $\Xi \neq 0$</td>
+                            </tr>
+                            <tr>
+                                <td>$r^* = k_{\text{use}}$</td>
+                                <td>✗ collapse fails</td>
+                                <td>absolute-value comparison meaningless</td>
+                            </tr>
+                            <tr>
+                                <td>$\mathrm{erank}(G^P) \le \mathrm{erank}(G^r)$ general</td>
+                                <td>✗ needs $\eta_k \ge s_k$</td>
+                                <td>spectral capture is the mechanism</td>
+                            </tr>
+                            <tr>
+                                <td>Compressive-expansive dichotomy</td>
+                                <td>△ trivial</td>
+                                <td>direct consequence of B's definition</td>
+                            </tr>
+                        </table>
+
+
+                        <!-- ===== 7. Discussion ===== -->
+                        <h2>7. Discussion</h2>
+
+                        <h4>Why every theory opens exactly one next question</h4>
+                        <p>Newton's $F = ma$ opened "What is $F$?" Shannon's $C = B\log(1+\text{SNR})$ opened "What code
+                            achieves $C$?" Paper D answers "What does ICL do in gradient-Gram space?" and opens "What
+                            determines $\alpha_P$?"—the subject of Paper E.</p>
+
+                        <h4>The limit of a single variable</h4>
+                        <p>Within a single task, $\mathrm{corr}(\alpha_P, \Delta I) = 0.98$. Across 5 tasks, the
+                            correlation drops to $R^2 = 0.39$. This is not a failure but a structural fact: $\alpha_P$
+                            governs $\Delta\tau_{\mathrm{rep}}$, but $\Delta I$ additionally depends on $\Delta Q$.</p>
+
+                        <h4>Honest boundaries</h4>
+                        <table>
+                            <tr>
+                                <th>Theorem</th>
+                                <th>What is proved</th>
+                                <th>What is not provable</th>
+                            </tr>
+                            <tr>
+                                <td>D.1 (Cone)</td>
+                                <td>Sector decomposition</td>
+                                <td>Reachability of both sectors (empirical)</td>
+                            </tr>
+                            <tr>
+                                <td>D.2a (Shrinkage)</td>
+                                <td>Conditional affine form</td>
+                                <td>Why $\alpha_P$ takes a specific value</td>
+                            </tr>
+                            <tr>
+                                <td>D.2b (erank)</td>
+                                <td>erank bound under $\eta_k \ge s_k$</td>
+                                <td>General bound without spectral capture</td>
+                            </tr>
+                            <tr>
+                                <td>D.3 (Compensation)</td>
+                                <td>$\Delta Q > |\Delta x|$</td>
+                                <td>Separation of $\tau_{\text{stat}}$ and $\tau_{\text{opt}}$</td>
+                            </tr>
+                            <tr>
+                                <td>D.4 (Interaction)</td>
+                                <td>BCH estimate of $\Xi$</td>
+                                <td>$\Xi$ sign requires measurement</td>
+                            </tr>
+                        </table>
+
+
+                        <!-- ===== 8. Conclusion ===== -->
+                        <h2>8. Conclusion</h2>
+                        <p>Paper A substituted computation for geometry. Paper B substituted performance for
+                            decomposition. Paper D substitutes adaptation for consensus shrinkage. All three follow the
+                            same pattern: <em>replace a known computation with the right mathematics, and
+                                counter-intuitive structure appears.</em></p>
+                        <p>ICL compresses the gradient geometry toward a consensus mode. The Orthogonal Contraction
+                            Theorem shows this compression is exactly $(1-\alpha_P)$, and the Entropy Bound yields an
+                            effective-rank upper bound numerically close to observed values ($\approx 1.24$ vs. $\approx
+                            1.25$ in the arithmetic task). Cross-model validation on 8 architectures confirms the
+                            shrinkage law with prediction error below 3% in all cases.</p>
+                        <p>The discovery that $\alpha_P$ is the master variable of ICL parallels Carnot's identification
+                            of $T_c/T_h$ as the efficiency bound: a single measurable quantity determines the ceiling.
+                            Combined with Paper B's quality factor $Q$, the complete picture is the <strong>Adaptation
+                                Cone Law</strong>: on constant-ECC leaves, ICL occupies the compressive cone while
+                            fine-tuning occupies the expansive cone.</p>
+                        <p>What determines $\alpha_P$—the "Boltzmann question" of this framework—is the subject of Paper
+                            E.</p>
+
+
+                        <!-- ===== References ===== -->
+                        <h2>References</h2>
+                        <ol>
+                            <li>Brown et al. "Language models are few-shot learners." NeurIPS, 2020.</li>
+                            <li><a href="paper_a.html">Lee, H. R. "The d² pullback theorem for attention score
+                                    manifolds." 2026.</a> DOI: <a
+                                    href="https://doi.org/10.5281/zenodo.18842724">10.5281/zenodo.18842724</a>.</li>
+                            <li><a href="paper_b.html">Lee, H. R. "The information theory of AI architectures: ECC and
+                                    intelligence decomposition." 2026.</a> DOI: <a
+                                    href="https://doi.org/10.5281/zenodo.18865785">10.5281/zenodo.18865785</a>.</li>
+                            <li>Akyürek et al. "What learning algorithm is in-context learning?" ICLR, 2023.</li>
+                            <li>Xie et al. "An explanation of in-context learning as implicit Bayesian inference." ICLR,
+                                2022.</li>
+                            <li>von Oswald et al. "Transformers learn in-context by gradient descent." ICML, 2023.</li>
+                            <li>Todd et al. "Function vectors in large language models." ICLR, 2024.</li>
+                            <li>Hendel et al. "In-context learning creates task vectors." EMNLP Findings, 2023.</li>
+                            <li>Ledoit, Wolf. "A well-conditioned estimator for large-dimensional covariance matrices."
+                                J. Multivariate Analysis, 2004.</li>
+                        </ol>
+
+                        <p style="margin-top:3rem; color: var(--muted); font-size: 0.85rem; text-align: center;">
+                            © 2026 Hyeong Rok Lee · <a href="mailto:rok@gahyeon.net">rok@gahyeon.net</a> · <a
+                                href="mailto:hyeongrok91@gmail.com">hyeongrok91@gmail.com</a> · <a href="/">Home</a>
+                        </p>
+
+        </div>
+</body>
+
+</html>
