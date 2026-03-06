@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="esED81cLkhXtqoloRlvSAtnYPkHvSsup-XjL_yLTawk" />
-    <title>Hyeong Rok Lee — Research</title>
+    <title>The ECC Series</title>
+    <meta name="description"
+        content="The Effective Computational Capacity series: a geometric decomposition of AI intelligence into capacity, adaptability, and learning quality.">
+    <meta name="author" content="Hyeong Rok Lee">
 
     <!-- ========== Google Scholar: Paper A ========== -->
     <meta name="citation_title" content="The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem">
@@ -32,228 +35,418 @@
     <meta name="citation_keywords"
         content="effective computational capacity; intelligence decomposition; neural architecture; Jacobian rank; capacity measure; information theory; transformer">
 
-    <!-- General SEO -->
-    <meta name="description"
-        content="Research page of Hyeong Rok Lee. Papers on Effective Computational Capacity (ECC), the d² Pullback Theorem, and Intelligence Decomposition.">
-    <meta name="author" content="Hyeong Rok Lee">
+    <!-- ========== Google Scholar: Paper D ========== -->
+    <meta name="citation_title"
+        content="Consensus-Target Linear Shrinkage: The Geometry of In-Context Learning in the Gradient-Gram Space">
+    <meta name="citation_author" content="Lee, Hyeong Rok">
+    <meta name="citation_date" content="2026/03">
+    <meta name="citation_publication_date" content="2026/03/06">
+    <meta name="citation_online_date" content="2026/03/06">
+    <meta name="citation_pdf_url" content="https://hyeongrok91-collab.github.io/paper_d.pdf">
+    <meta name="citation_doi" content="10.5281/zenodo.18883406">
+    <meta name="citation_language" content="en">
+    <meta name="citation_keywords"
+        content="in-context learning; gradient-Gram space; linear shrinkage; effective rank; cone law; adaptation geometry">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="Hyeong Rok Lee — AI Theory & Mathematical Foundations">
+    <meta property="og:title" content="The ECC Series — AI Theory &amp; Mathematical Foundations">
     <meta property="og:description"
-        content="Research on Effective Computational Capacity (ECC), the d² Pullback Theorem, and Intelligence Decomposition for neural architectures.">
+        content="A geometric decomposition of AI intelligence: from attention geometry to adaptation dynamics.">
     <meta property="og:url" content="https://hyeongrok91-collab.github.io/">
     <meta property="og:image" content="https://hyeongrok91-collab.github.io/og-image.png">
     <meta property="og:site_name" content="Hyeong Rok Lee Research">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Hyeong Rok Lee — AI Theory & Mathematical Foundations">
+    <meta name="twitter:title" content="The ECC Series — AI Theory &amp; Mathematical Foundations">
     <meta name="twitter:description"
-        content="Research on ECC, the d² Pullback Theorem, and Intelligence Decomposition.">
+        content="A geometric decomposition of AI intelligence: from attention geometry to adaptation dynamics.">
     <meta name="twitter:image" content="https://hyeongrok91-collab.github.io/og-image.png">
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --bg: #0d1117;
-            --surface: #161b22;
-            --border: #30363d;
-            --text: #e6edf3;
-            --text-secondary: #8b949e;
-            --accent: #58a6ff;
-            --accent-hover: #79c0ff;
-            --green: #3fb950;
-            --purple: #bc8cff;
+            --paper: #f3efe8;
+            --ink: #2c241e;
+            --muted: #71655b;
+            --line: rgba(76, 63, 53, 0.28);
+            --line-strong: rgba(76, 63, 53, 0.55);
+            --blue: #2d43a6;
+            --blue-soft: rgba(45, 67, 166, 0.12);
+            --orange: #945b2d;
+            --orange-soft: rgba(148, 91, 45, 0.12);
+            --future: rgba(110, 98, 89, 0.76);
+            --purple: rgba(102, 91, 160, 0.7);
+            --shadow: 0 10px 26px rgba(58, 44, 34, 0.07);
         }
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
             min-height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(255, 255, 255, 0.58), transparent 24%),
+                linear-gradient(180deg, #f8f5ef 0%, var(--paper) 100%);
+            color: var(--ink);
+            font-family: "Source Sans 3", sans-serif;
+            line-height: 1.55;
         }
 
-        .container {
-            max-width: 800px;
+        .page {
+            max-width: 980px;
             margin: 0 auto;
-            padding: 3rem 1.5rem;
+            padding: 22px 18px 44px;
         }
 
-        header {
-            margin-bottom: 3rem;
-            padding-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
+        h1,
+        h2,
+        h3 {
+            font-family: "EB Garamond", serif;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+        }
+
+        .eyebrow {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 0.72rem;
+            margin-bottom: 8px;
         }
 
         h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            font-size: clamp(2.15rem, 3.5vw, 3.2rem);
+            line-height: 0.94;
+            margin-bottom: 8px;
         }
 
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1.1rem;
+        .hero {
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 16px;
+            margin-bottom: 22px;
         }
 
-        .links {
-            margin-top: 1rem;
+        .hero p {
+            max-width: 660px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .section {
+            margin-top: 40px;
+        }
+
+        .section-head {
             display: flex;
-            gap: 1.5rem;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 20px;
+            margin-bottom: 10px;
         }
 
-        .links a {
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 0.95rem;
+        .section-head h2 {
+            font-size: 1.44rem;
         }
 
-        .links a:hover {
-            color: var(--accent-hover);
-            text-decoration: underline;
+        .section-head p,
+        .section-note,
+        .tree-caption,
+        footer {
+            color: var(--muted);
+            font-size: 0.86rem;
         }
 
-        h2 {
-            font-size: 1.4rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-            color: var(--green);
+        .reading-guide {
+            font-style: italic;
+            color: #a9a29a;
+            font-size: 0.82rem;
         }
 
-        .paper {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            transition: border-color 0.2s;
+        .tree-shell {
+            border-top: 1px solid var(--line);
+            border-bottom: 1px solid var(--line);
+            padding: 6px 0 8px;
         }
 
-        .paper:hover {
-            border-color: var(--accent);
+        .tree-wrap {
+            overflow-x: auto;
+            padding: 2px 0 6px;
         }
 
-        .paper-label {
-            display: inline-block;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            padding: 0.15rem 0.5rem;
-            border-radius: 4px;
-            margin-bottom: 0.75rem;
+        svg {
+            display: block;
+            width: 100%;
+            min-width: 820px;
+            height: auto;
         }
 
-        .label-a {
-            background: rgba(56, 166, 255, 0.15);
-            color: var(--accent);
+        .tree-line {
+            stroke: #493d34;
+            stroke-width: 1.02;
+            fill: none;
+            stroke-linecap: round;
         }
 
-        .label-b {
-            background: rgba(188, 140, 255, 0.15);
-            color: var(--purple);
+        .tree-line.ecc {
+            stroke: var(--blue);
+            stroke-width: 1.22;
         }
 
-        .paper-title {
-            font-size: 1.15rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+        .tree-line.future {
+            stroke: var(--future);
+            stroke-width: 1.05;
+            stroke-dasharray: 6 5;
         }
 
-        .paper-title a {
-            color: var(--text);
-            text-decoration: none;
+        .tree-cross {
+            stroke: var(--purple);
+            stroke-width: 0.66;
+            stroke-dasharray: 2.5 5;
+            fill: none;
         }
 
-        .paper-title a:hover {
-            color: var(--accent);
+        .cross-label {
+            fill: rgba(90, 77, 156, 0.86);
+            font-size: 7.4px;
+            text-anchor: middle;
+            font-style: italic;
         }
 
-        .paper-meta {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-bottom: 0.75rem;
+        .node rect {
+            fill: rgba(255, 255, 255, 0.22);
+            stroke: rgba(73, 61, 52, 0.82);
+            stroke-width: 0.84;
         }
 
-        .paper-abstract {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            line-height: 1.7;
+        .node text {
+            text-anchor: middle;
         }
 
-        .paper-abstract details summary {
+        .node-title {
+            fill: var(--ink);
+            font-size: 12px;
+        }
+
+        .node-sub {
+            fill: var(--muted);
+            font-size: 9px;
+        }
+
+        .ecc-node rect {
+            fill: rgba(234, 238, 255, 0.68);
+            stroke: rgba(45, 67, 166, 0.42);
+        }
+
+        .ecc-node .node-title {
+            fill: var(--blue);
+        }
+
+        .current-node rect {
+            fill: rgba(241, 226, 210, 0.84);
+            stroke: rgba(148, 91, 45, 0.88);
+            stroke-width: 1.05;
+        }
+
+        .current-node .node-title {
+            fill: var(--orange);
+        }
+
+        .future-node rect {
+            fill: rgba(239, 230, 221, 0.50);
+            stroke: var(--future);
+            stroke-dasharray: 5 4;
+        }
+
+        .click-node {
             cursor: pointer;
-            color: var(--accent);
-            font-size: 0.85rem;
+            transition: transform 0.16s ease;
         }
 
-        .paper-links {
-            margin-top: 0.75rem;
+        .click-node:hover {
+            transform: translateY(-1px);
+        }
+
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-rows: repeat(6, auto);
+            gap: 0 16px;
+            margin-top: 10px;
+        }
+
+        .guide-card {
+            display: grid;
+            grid-row: span 6;
+            grid-template-rows: subgrid;
+            padding-top: 3px;
+            border-top: 1px solid var(--line);
+            row-gap: 6px;
+        }
+
+        .guide-badge {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.7rem;
+            margin-bottom: 2px;
+        }
+
+        .guide-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 0;
+        }
+
+        .guide-card dl {
+            display: grid;
+            grid-row: span 4;
+            grid-template-rows: subgrid;
+            gap: 10px;
+        }
+
+        .guide-card dt {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.68rem;
+            margin-bottom: 2px;
+        }
+
+        .guide-card dd {
+            margin: 0;
+            font-size: 0.84rem;
+        }
+
+        .guide-card .how-row {
+            border-left: 2px solid var(--blue-soft);
+            padding-left: 8px;
+        }
+
+        .guide-card .how-row dt {
+            color: var(--blue);
+        }
+
+        .guide-card .how-row dd {
+            font-size: 0.82rem;
+            color: var(--ink);
+            line-height: 1.45;
+        }
+
+        .guide-card code {
+            color: var(--blue);
+            font-family: inherit;
+            font-weight: 600;
+        }
+
+        .pub-list {
+            display: grid;
+            gap: 0;
+            margin-top: 10px;
+        }
+
+        .pub-item {
+            display: grid;
+            grid-template-columns: 86px minmax(0, 1fr) auto;
+            gap: 14px;
+            align-items: start;
+            border-top: 1px solid var(--line);
+            padding: 9px 0;
+        }
+
+        .pub-kicker {
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-size: 0.7rem;
+            padding-top: 4px;
+        }
+
+        .pub-main h3 {
+            font-size: 1.18rem;
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+
+        .pub-main p {
+            color: var(--muted);
+            font-size: 0.84rem;
+        }
+
+        .pub-links {
             display: flex;
-            gap: 1rem;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: flex-end;
+            padding-top: 2px;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            padding: 0.35rem 0.75rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text);
+            justify-content: center;
+            padding: 5px 10px;
+            border-radius: 999px;
+            border: 1px solid rgba(43, 36, 30, 0.14);
+            background: rgba(255, 255, 255, 0.18);
+            color: var(--ink);
             text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.2s;
+            font-size: 0.78rem;
+            transition: all 0.14s ease;
         }
 
         .btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .section {
-            margin-bottom: 3rem;
-        }
-
-        .keywords {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .keyword {
-            font-size: 0.8rem;
-            padding: 0.2rem 0.6rem;
-            background: rgba(56, 166, 255, 0.1);
-            border: 1px solid rgba(56, 166, 255, 0.2);
-            border-radius: 12px;
-            color: var(--accent);
+            color: var(--blue);
+            border-color: rgba(45, 67, 166, 0.34);
         }
 
         footer {
-            margin-top: 3rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border);
-            color: var(--text-secondary);
-            font-size: 0.85rem;
+            margin-top: 28px;
+            text-align: center;
+            border-top: 1px solid var(--line);
+            padding-top: 14px;
         }
 
-        @media (max-width: 600px) {
-            .container {
-                padding: 1.5rem 1rem;
+        #tooltip {
+            position: fixed;
+            z-index: 30;
+            max-width: 270px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: rgba(34, 29, 25, 0.92);
+            color: #f6efe8;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 0.8rem;
+            line-height: 1.4;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(4px);
+            transition: opacity 0.14s ease, transform 0.14s ease;
+        }
+
+        #tooltip.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 920px) {
+            .guide-grid {
+                grid-template-columns: 1fr;
             }
 
-            h1 {
-                font-size: 1.5rem;
+            .pub-item {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .pub-links {
+                justify-content: flex-start;
             }
         }
     </style>
@@ -267,10 +460,10 @@
       "headline": "The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem",
       "author": {"@type": "Person", "name": "Hyeong Rok Lee", "email": "rok@gahyeon.net"},
       "datePublished": "2026-03-01",
-      "description": "We prove the d² pullback theorem: the gradient of any loss through attention lies in a d²-dimensional bilinear subspace. We compute exact Jacobian ranks and prove same-depth softmax-to-polynomial replacement.",
+      "description": "We prove the d² pullback theorem: the gradient of any loss through attention lies in a d²-dimensional bilinear subspace.",
       "url": "https://hyeongrok91-collab.github.io/paper_a.html",
       "sameAs": "https://doi.org/10.5281/zenodo.18842724",
-      "keywords": ["attention mechanism", "pullback theorem", "Jacobian rank", "polynomial attention", "transformer", "optimization geometry"],
+      "keywords": ["attention mechanism", "pullback theorem", "Jacobian rank", "polynomial attention", "transformer"],
       "inLanguage": "en",
       "isAccessibleForFree": true,
       "encoding": {"@type": "MediaObject", "contentUrl": "https://hyeongrok91-collab.github.io/paper_a.pdf", "encodingFormat": "application/pdf"}
@@ -282,128 +475,415 @@
       "headline": "The Information Theory of AI Architectures: Effective Computational Capacity and Intelligence Decomposition",
       "author": {"@type": "Person", "name": "Hyeong Rok Lee", "email": "rok@gahyeon.net"},
       "datePublished": "2026-03-01",
-      "description": "We define Effective Computational Capacity (ECC) as the generic Jacobian rank and prove it is the unique capacity measure satisfying three natural axioms. We decompose intelligence as ECC × τ_rep × τ_stat × τ_opt.",
+      "description": "We define Effective Computational Capacity (ECC) as the generic Jacobian rank and prove it is the unique capacity measure satisfying three natural axioms.",
       "url": "https://hyeongrok91-collab.github.io/paper_b.html",
       "sameAs": "https://doi.org/10.5281/zenodo.18865785",
-      "keywords": ["effective computational capacity", "intelligence decomposition", "neural architecture", "Jacobian rank", "information theory", "transformer"],
+      "keywords": ["effective computational capacity", "intelligence decomposition", "neural architecture", "Jacobian rank", "information theory"],
       "inLanguage": "en",
       "isAccessibleForFree": true,
       "encoding": {"@type": "MediaObject", "contentUrl": "https://hyeongrok91-collab.github.io/paper_b.pdf", "encodingFormat": "application/pdf"}
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "ScholarlyArticle",
+      "name": "Consensus-Target Linear Shrinkage: The Geometry of In-Context Learning in the Gradient-Gram Space",
+      "headline": "Consensus-Target Linear Shrinkage: The Geometry of In-Context Learning in the Gradient-Gram Space",
+      "author": {"@type": "Person", "name": "Hyeong Rok Lee", "email": "rok@gahyeon.net"},
+      "datePublished": "2026-03-06",
+      "description": "We decompose Gram matrices before and after prompting, proving an affine shrinkage toward consensus emerges as the geometry of in-context learning.",
+      "url": "https://doi.org/10.5281/zenodo.18883406",
+      "sameAs": "https://doi.org/10.5281/zenodo.18883406",
+      "keywords": ["in-context learning", "gradient-Gram space", "linear shrinkage", "effective rank", "cone law"],
+      "inLanguage": "en",
+      "isAccessibleForFree": true,
+      "encoding": {"@type": "MediaObject", "contentUrl": "https://hyeongrok91-collab.github.io/paper_d.pdf", "encodingFormat": "application/pdf"}
     }]
     </script>
 </head>
 
 <body>
-    <div class="container">
-        <header>
-            <h1>Hyeong Rok Lee</h1>
-            <p class="subtitle">Independent Researcher — AI Theory &amp; Mathematical Foundations</p>
-            <div class="links">
-                <a href="mailto:rok@gahyeon.net">Email</a>
-                <!-- TODO: 아래 링크들을 실제 URL로 교체하세요 -->
-                <a
-                    href="https://zenodo.org/search?q=metadata.creators.person_or_org.name%3A%22Lee%2C%20Hyeong%20Rok%22">Zenodo</a>
-            </div>
+    <div class="page">
+        <header class="hero">
+            <div class="eyebrow">Research Series</div>
+            <h1>The ECC Series</h1>
+            <p>
+                A geometric decomposition of AI intelligence: from attention geometry to adaptation dynamics.
+            </p>
         </header>
 
-        <div class="section">
-            <h2>Publications</h2>
+        <section class="section" aria-labelledby="roadmap-title">
+            <div class="section-head">
+                <h2 id="roadmap-title">Series Roadmap</h2>
+                <p class="reading-guide">Each node is a paper; dashed lines mark future work.</p>
+            </div>
+            <div class="tree-shell">
+                <div class="tree-wrap">
+                    <svg viewBox="0 0 840 520" xmlns="http://www.w3.org/2000/svg" aria-label="Physics and ECC roadmap">
+                        <defs>
+                            <marker id="arrow-ink-v8" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5"
+                                markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+                                <path d="M0,0.5 L7,3.5 L0,6.5 Z" fill="#493d34" opacity="0.94" />
+                            </marker>
+                            <marker id="arrow-blue-v8" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5"
+                                markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+                                <path d="M0,0.5 L7,3.5 L0,6.5 Z" fill="#2d43a6" opacity="0.98" />
+                            </marker>
+                            <marker id="arrow-future-v8" markerWidth="7" markerHeight="7" refX="6.2" refY="3.5"
+                                markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+                                <path d="M0,0.5 L7,3.5 L0,6.5 Z" fill="rgba(110,98,89,0.88)" opacity="0.92" />
+                            </marker>
+                        </defs>
 
-            <!-- Paper B (newer, flagship) -->
-            <div class="paper">
-                <span class="paper-label label-b">Paper B — Flagship</span>
-                <div class="paper-title">
-                    <a href="https://doi.org/10.5281/zenodo.18865785">
-                        The Information Theory of AI Architectures: Effective Computational Capacity and Intelligence
-                        Decomposition
-                    </a>
-                </div>
-                <div class="paper-meta">
-                    Hyeong Rok Lee · March 2026 · Preprint
-                </div>
-                <div class="paper-abstract">
-                    <details>
-                        <summary>Abstract</summary>
-                        <p style="margin-top: 0.5rem;">
-                            We define Effective Computational Capacity (ECC) as the generic Jacobian rank of the
-                            realization map from parameters to functions. This quantity measures the number of
-                            functionally independent parameter directions of a neural architecture, and we prove that it
-                            is the unique capacity measure satisfying three natural axioms: equivalence-invariance,
-                            direct-sum additivity, and normalization. We compute corrected ECC formulas for standard
-                            transformer components. For full multi-head attention with H heads, head dimension d_h, and
-                            value dimension d_v, ECC_Attn = H[d_h(2d−d_h) + d_v(2d−d_v)]. For a width-m ReLU
-                            feed-forward network, ECC_FFN = m(2d−1). We define task intelligence by Intelligence(T) =
-                            ECC · τ_rep · τ_stat · τ_opt, where τ_rep is representational alignment, τ_stat statistical
-                            efficiency, and τ_opt optimization quality. We prove a conditional coding theorem linking
-                            excess risk to an aligned approximation dimension k, and we isolate the exact point at which
-                            a purely static bridge from ECC to performance fails. The correct local bridge is a
-                            measurable residual-tail quantity η_T(k) derived from the pullback task metric M_T = J*ᵀ G_T
-                            J*.
-                        </p>
-                    </details>
-                </div>
-                <div class="paper-links">
-                    <a class="btn" href="paper_b.html">📖 Full Text (HTML)</a>
-                    <a class="btn" href="paper_b.pdf">📄 PDF</a>
-                    <a class="btn" href="https://doi.org/10.5281/zenodo.18865785">🔗 DOI</a>
+                        <text x="149" y="24" class="node-title" font-size="17" fill="#71655b">Physics</text>
+                        <text x="718" y="24" class="node-title" font-size="17" fill="#2d43a6">ECC Series</text>
+
+                        <!-- Physics arrows: edge-to-edge (bottom of source → top of target) -->
+                        <!-- Kepler(158,34-58) → Newton(158,102-128) -->
+                        <line class="tree-line" x1="158" y1="58" x2="158" y2="102" marker-end="url(#arrow-ink-v8)" />
+                        <!-- Newton → Lagrange(115,176-202) -->
+                        <line class="tree-line" x1="138" y1="128" x2="115" y2="176" marker-end="url(#arrow-ink-v8)" />
+                        <!-- Newton → Thermo(232,176-202) -->
+                        <line class="tree-line" x1="178" y1="128" x2="220" y2="176" marker-end="url(#arrow-ink-v8)" />
+                        <!-- Thermo → Carnot(156,250-276) -->
+                        <line class="tree-line" x1="205" y1="202" x2="165" y2="250" marker-end="url(#arrow-ink-v8)" />
+                        <!-- Thermo → Clausius(247,258-284) -->
+                        <line class="tree-line" x1="240" y1="202" x2="247" y2="258" marker-end="url(#arrow-ink-v8)" />
+                        <!-- Carnot → Boltzmann(196,328-354) -->
+                        <line class="tree-line" x1="165" y1="276" x2="186" y2="328" marker-end="url(#arrow-ink-v8)" />
+                        <!-- Clausius → Boltzmann -->
+                        <line class="tree-line" x1="247" y1="284" x2="206" y2="328" marker-end="url(#arrow-ink-v8)" />
+                        <!-- Boltzmann → Gibbs(134,380-404) -->
+                        <line class="tree-line" x1="175" y1="354" x2="134" y2="380" marker-end="url(#arrow-ink-v8)" />
+                        <!-- Boltzmann → Phase(264,398-422) -->
+                        <line class="tree-line" x1="215" y1="354" x2="264" y2="432" marker-end="url(#arrow-ink-v8)" />
+
+                        <!-- ECC arrows: edge-to-edge -->
+                        <!-- Paper A(688,34-58) → Paper B(686,102-128) -->
+                        <line class="tree-line ecc" x1="688" y1="58" x2="688" y2="102"
+                            marker-end="url(#arrow-blue-v8)" />
+                        <!-- Paper B → D×B coupling(616,176-202) -->
+                        <line class="tree-line ecc" x1="660" y1="128" x2="616" y2="176"
+                            marker-end="url(#arrow-blue-v8)" />
+                        <!-- Paper B → (A deepening)(785,176-202) -->
+                        <line class="tree-line ecc" x1="716" y1="128" x2="760" y2="176"
+                            marker-end="url(#arrow-blue-v8)" />
+                        <!-- D×B coupling → D:Shrinkage(589,250-278) -->
+                        <line class="tree-line ecc" x1="600" y1="202" x2="575" y2="250"
+                            marker-end="url(#arrow-blue-v8)" />
+                        <!-- D×B coupling → D:Cone Law(775,250-278) -->
+                        <line class="tree-line ecc" x1="640" y1="202" x2="740" y2="250"
+                            marker-end="url(#arrow-blue-v8)" />
+                        <!-- D:Shrinkage(589,250-278) → Paper E(604,304-330) -->
+                        <line class="tree-line future" x1="589" y1="278" x2="604" y2="304"
+                            marker-end="url(#arrow-future-v8)" />
+                        <!-- D:Cone Law(775,250-278) → Paper F?(766,304-330) -->
+                        <line class="tree-line future" x1="775" y1="278" x2="766" y2="304"
+                            marker-end="url(#arrow-future-v8)" />
+                        <!-- Paper E(604,304-330) → Unified(681,380-404) -->
+                        <line class="tree-line future" x1="604" y1="330" x2="655" y2="380"
+                            marker-end="url(#arrow-future-v8)" />
+                        <!-- Paper F?(766,304-330) → Unified(681,380-404) -->
+                        <line class="tree-line future" x1="766" y1="330" x2="707" y2="380"
+                            marker-end="url(#arrow-future-v8)" />
+
+                        <path class="tree-cross" d="M 196 56 Q 418 46 640 56" />
+                        <path class="tree-cross" d="M 202 124 Q 423 114 644 124" />
+                        <path class="tree-cross" d="M 200 248 Q 382 230 554 248" />
+                        <path class="tree-cross" d="M 254 278 Q 418 305 700 278" />
+                        <path class="tree-cross" d="M 247 348 Q 404 360 560 348" />
+                        <path class="tree-cross" d="M 170 392 Q 400 430 630 392" />
+
+                        <text x="418" y="54" class="cross-label">pattern ↔ pattern</text>
+                        <text x="422" y="122" class="cross-label">equation of state</text>
+                        <text x="388" y="244" class="cross-label">efficiency bound</text>
+                        <text x="480" y="292" class="cross-label">direction law</text>
+                        <text x="406" y="346" class="cross-label">micro-theory</text>
+                        <text x="400" y="420" class="cross-label">ensemble</text>
+
+                        <g class="node" data-tip="Empirical pattern before governing law.">
+                            <rect x="122" y="34" width="72" height="24" rx="4.5" />
+                            <text x="158" y="47" class="node-title" font-size="11">Kepler</text>
+                            <text x="158" y="56" class="node-sub">“pattern”</text>
+                        </g>
+                        <g class="node" data-tip="Pattern formalized as law.">
+                            <rect x="116" y="102" width="84" height="26" rx="4.5" />
+                            <text x="158" y="115" class="node-title" font-size="11">Newton</text>
+                            <text x="158" y="124" class="node-sub">
+                                <tspan font-style="italic">F</tspan> = <tspan font-style="italic">ma</tspan>
+                            </text>
+                        </g>
+                        <g class="node" data-tip="Deeper reformulation.">
+                            <rect x="67" y="176" width="96" height="26" rx="4.5" />
+                            <text x="115" y="189" class="node-title" font-size="10.6">Lagrange</text>
+                            <text x="115" y="198" class="node-sub">reformulation</text>
+                        </g>
+                        <g class="node" data-tip="New domain of constraints.">
+                            <rect x="173" y="176" width="118" height="26" rx="4.5" />
+                            <text x="232" y="189" class="node-title" font-size="10.6">Thermodynamics</text>
+                            <text x="232" y="198" class="node-sub">new domain</text>
+                        </g>
+                        <g class="node" data-tip="Upper bound on efficiency.">
+                            <rect x="110" y="250" width="92" height="26" rx="4.5" />
+                            <text x="156" y="263" class="node-title" font-size="10.6">Carnot</text>
+                            <text x="156" y="272" class="node-sub">
+                                <tspan font-style="italic">η</tspan> ≤ 1 − <tspan font-style="italic">T</tspan>
+                                <tspan font-size="6" baseline-shift="sub">c</tspan>/<tspan font-style="italic">T</tspan>
+                                <tspan font-size="6" baseline-shift="sub">h</tspan>
+                            </text>
+                        </g>
+                        <g class="node" data-tip="Direction law.">
+                            <rect x="208" y="258" width="78" height="26" rx="4.5" />
+                            <text x="247" y="271" class="node-title" font-size="10.6">Clausius</text>
+                            <text x="247" y="280" class="node-sub">
+                                <tspan font-style="italic">dS</tspan> ≥ 0
+                            </text>
+                        </g>
+                        <g class="node" data-tip="Microscopic explanation.">
+                            <rect x="145" y="328" width="102" height="26" rx="4.5" />
+                            <text x="196" y="341" class="node-title" font-size="10.6">Boltzmann</text>
+                            <text x="196" y="350" class="node-sub">
+                                <tspan font-style="italic">S</tspan> = <tspan font-style="italic">k</tspan> ln <tspan
+                                    font-style="italic">W</tspan>
+                            </text>
+                        </g>
+                        <g class="node" data-tip="Ensemble theory.">
+                            <rect x="98" y="380" width="72" height="24" rx="4.5" />
+                            <text x="134" y="393" class="node-title" font-size="11">Gibbs</text>
+                            <text x="134" y="402" class="node-sub">ensemble</text>
+                        </g>
+                        <g class="node" data-tip="Phase transitions and scaling.">
+                            <rect x="222" y="432" width="84" height="24" rx="4.5" />
+                            <text x="264" y="445" class="node-title" font-size="11">Phase</text>
+                            <text x="264" y="454" class="node-sub">transitions</text>
+                        </g>
+
+                        <a href="paper_a.html">
+                            <g class="node ecc-node click-node"
+                                data-tip="Paper A: from attention matrix to d² pullback geometry.">
+                                <rect x="636" y="34" width="104" height="24" rx="4.5" />
+                                <text x="688" y="47" class="node-title" font-size="11">Paper A</text>
+                                <text x="688" y="56" class="node-sub">rank = <tspan font-style="italic">d</tspan>
+                                    ²</text>
+                            </g>
+                        </a>
+                        <a href="paper_b.html">
+                            <g class="node ecc-node click-node" data-tip="Paper B: from performance to decomposition.">
+                                <rect x="630" y="102" width="112" height="26" rx="4.5" />
+                                <text x="686" y="115" class="node-title" font-size="11">Paper B</text>
+                                <text x="686" y="124" class="node-sub">
+                                    <tspan font-style="italic">I</tspan> = ECC · <tspan font-style="italic">τ</tspan> ·
+                                    <tspan font-style="italic">Q</tspan>
+                                </text>
+                            </g>
+                        </a>
+                        <g class="node ecc-node" data-tip="Bridge from decomposition to adaptation.">
+                            <rect x="566" y="176" width="100" height="26" rx="4.5" />
+                            <text x="616" y="189" class="node-title" font-size="10.6">D×B coupling</text>
+                            <text x="616" y="198" class="node-sub">Δ<tspan font-style="italic">τ</tspan>
+                                universal</text>
+                        </g>
+                        <g class="node ecc-node" data-tip="A-side deepening: attention as matching.">
+                            <rect x="732" y="176" width="106" height="26" rx="4.5" />
+                            <text x="785" y="189" class="node-title" font-size="10.6">(A deepening)</text>
+                            <text x="785" y="198" class="node-sub">attn = matching</text>
+                        </g>
+                        <a href="paper_d.pdf">
+                            <g class="node current-node click-node"
+                                data-tip="Paper D: from prompting behavior to shrinkage law.">
+                                <rect x="532" y="250" width="114" height="28" rx="5.5" />
+                                <text x="589" y="263" class="node-title" font-size="10.8">D: Shrinkage</text>
+                                <text x="589" y="272" class="node-sub">
+                                    <tspan font-style="italic">G</tspan>
+                                    <tspan font-size="6" baseline-shift="super">P</tspan> = α<tspan font-style="italic">
+                                        J</tspan> + (1−α)<tspan font-style="italic">G</tspan>
+                                    <tspan font-size="6" baseline-shift="super">r</tspan>
+                                </text>
+                            </g>
+                        </a>
+                        <a href="paper_d.pdf">
+                            <g class="node current-node click-node" data-tip="Paper D: directional adaptation law.">
+                                <rect x="720" y="250" width="110" height="28" rx="5.5" />
+                                <text x="775" y="263" class="node-title" font-size="10.8">D: Cone Law</text>
+                                <text x="775" y="272" class="node-sub">direction constraint</text>
+                            </g>
+                        </a>
+                        <g class="node future-node" data-tip="Microscopic theory of αP.">
+                            <rect x="560" y="304" width="88" height="26" rx="4.5" />
+                            <text x="604" y="317" class="node-title" font-size="10.6">Paper E</text>
+                            <text x="604" y="326" class="node-sub">α<tspan font-size="6" baseline-shift="sub">P</tspan>
+                                theory</text>
+                        </g>
+                        <g class="node future-node" data-tip="Scaling law branch.">
+                            <rect x="726" y="304" width="80" height="26" rx="4.5" />
+                            <text x="766" y="317" class="node-title" font-size="10.6">Paper F?</text>
+                            <text x="766" y="326" class="node-sub">scaling law</text>
+                        </g>
+                        <g class="node future-node" data-tip="Unified adaptation theory.">
+                            <rect x="630" y="380" width="102" height="24" rx="4.5" />
+                            <text x="681" y="393" class="node-title" font-size="11">Unified</text>
+                            <text x="681" y="402" class="node-sub">adaptation theory</text>
+                        </g>
+                    </svg>
                 </div>
             </div>
+            <p class="tree-caption reading-guide">Left column: the physics analogy. Right column: each published paper.
+                Dotted
+                cross-links show the structural correspondence.</p>
+        </section>
 
-            <!-- Paper A -->
-            <div class="paper">
-                <span class="paper-label label-a">Paper A — Foundation</span>
-                <div class="paper-title">
-                    <a href="https://doi.org/10.5281/zenodo.18842724">
-                        The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem
-                    </a>
-                </div>
-                <div class="paper-meta">
-                    Hyeong Rok Lee · March 2026 · Preprint
-                </div>
-                <div class="paper-abstract">
-                    <details>
-                        <summary>Abstract</summary>
-                        <p style="margin-top: 0.5rem;">
-                            Self-attention is usually described as an n × n operation. We argue that this is the wrong
-                            intrinsic dimension. For a single head with token matrix X ∈ ℝⁿˣᵈ and parameter product M =
-                            W_Q W_Kᵀ ∈ ℝᵈˣᵈ, the score matrix has the constrained bilinear form S(M) = XMXᵀ/√d. Our
-                            first result is the d² pullback theorem: for any differentiable loss through a row-wise
-                            attention map, the gradient with respect to M is exactly the sandwich transform X⊤G(M)X/√d.
-                            Hence optimization depends only on the bilinear score subspace whose dimension is rank(X)²
-                            and equals d² whenever X has full column rank. Our second result computes the exact local
-                            Jacobian rank for analytic row normalizers: rank D_M P(0) = r(r − ε_X). We further prove
-                            same-depth uniform replacement of softmax attention by positive polynomial attention,
-                            formulate a conditional depth-compensation theorem, and establish a no-go theorem for
-                            universal fixed-width degree-2 simulation.
-                        </p>
-                    </details>
-                </div>
-                <div class="paper-links">
-                    <a class="btn" href="paper_a.html">📖 Full Text (HTML)</a>
-                    <a class="btn" href="paper_a.pdf">📄 PDF</a>
-                    <a class="btn" href="https://doi.org/10.5281/zenodo.18842724">🔗 DOI</a>
-                </div>
+        <section class="section" aria-labelledby="guide-title">
+            <div class="section-head">
+                <h2 id="guide-title">How to Read the Series</h2>
             </div>
-        </div>
+            <div class="guide-grid">
+                <article class="guide-card">
+                    <div class="guide-badge">Paper A</div>
+                    <h3>Geometry</h3>
+                    <dl>
+                        <div>
+                            <dt>What people saw</dt>
+                            <dd><code>n² attention</code></dd>
+                        </div>
+                        <div class="how-row">
+                            <dt>How</dt>
+                            <dd>Recast attention as Euclidean matching — the score gradient then lives in a
+                                d²-dimensional subspace.</dd>
+                        </div>
+                        <div>
+                            <dt>What the paper identified</dt>
+                            <dd><code>d² pullback geometry</code></dd>
+                        </div>
+                        <div>
+                            <dt>What question it opened</dt>
+                            <dd>What law governs usable capacity?</dd>
+                        </div>
+                    </dl>
+                </article>
+                <article class="guide-card">
+                    <div class="guide-badge">Paper B</div>
+                    <h3>Decomposition</h3>
+                    <dl>
+                        <div>
+                            <dt>What people saw</dt>
+                            <dd><code>performance / parameter count</code></dd>
+                        </div>
+                        <div class="how-row">
+                            <dt>How</dt>
+                            <dd>Jacobian rank of the parameter→function map = the unique capacity measure. Same
+                                axiomatic logic as Shannon's channel capacity.</dd>
+                        </div>
+                        <div>
+                            <dt>What the paper identified</dt>
+                            <dd><code>ECC × τ × Q</code></dd>
+                        </div>
+                        <div>
+                            <dt>What question it opened</dt>
+                            <dd>How does adaptation move this state?</dd>
+                        </div>
+                    </dl>
+                </article>
+                <article class="guide-card">
+                    <div class="guide-badge">Paper D</div>
+                    <h3>Adaptation</h3>
+                    <dl>
+                        <div>
+                            <dt>What people saw</dt>
+                            <dd><code>few-shot prompting improves behavior</code></dd>
+                        </div>
+                        <div class="how-row">
+                            <dt>How</dt>
+                            <dd>Decompose the Gram matrix before and after prompting — an affine shrinkage toward
+                                consensus emerges.</dd>
+                        </div>
+                        <div>
+                            <dt>What the paper identified</dt>
+                            <dd><code>consensus-target shrinkage</code></dd>
+                        </div>
+                        <div>
+                            <dt>What question it opened</dt>
+                            <dd>What determines α<sub>P</sub> and scaling?</dd>
+                        </div>
+                    </dl>
+                </article>
+            </div>
+        </section>
 
-        <div class="section">
-            <h2>Research Areas</h2>
-            <div class="keywords">
-                <span class="keyword">Effective Computational Capacity</span>
-                <span class="keyword">Intelligence Decomposition</span>
-                <span class="keyword">Jacobian Rank Theory</span>
-                <span class="keyword">Attention Geometry</span>
-                <span class="keyword">Axiomatic Capacity Measures</span>
-                <span class="keyword">Information Theory of AI</span>
-                <span class="keyword">Transformer Architecture Theory</span>
-                <span class="keyword">Pullback Optimization</span>
+        <section class="section" aria-labelledby="pub-title">
+            <div class="section-head">
+                <h2 id="pub-title">Suggested Reading Order</h2>
+                <p>A → B → D</p>
             </div>
-        </div>
+            <div class="pub-list">
+                <article class="pub-item">
+                    <div class="pub-kicker">Paper A · Foundation</div>
+                    <div class="pub-main">
+                        <h3>The d² Pullback Theorem</h3>
+                        <p>Start with the geometric move that the rest of the series repeats.</p>
+                    </div>
+                    <div class="pub-links">
+                        <a class="btn" href="paper_a.html">HTML</a>
+                        <a class="btn" href="paper_a.pdf">PDF</a>
+                        <a class="btn" href="https://doi.org/10.5281/zenodo.18842724">DOI</a>
+                    </div>
+                </article>
+                <article class="pub-item">
+                    <div class="pub-kicker">Paper B · Flagship</div>
+                    <div class="pub-main">
+                        <h3>Information Theory of AI Architectures</h3>
+                        <p>Then read the decomposition paper: performance becomes <code>I = ECC × τ × Q</code>.</p>
+                    </div>
+                    <div class="pub-links">
+                        <a class="btn" href="paper_b.html">HTML</a>
+                        <a class="btn" href="paper_b.pdf">PDF</a>
+                        <a class="btn" href="https://doi.org/10.5281/zenodo.18865785">DOI</a>
+                    </div>
+                </article>
+                <article class="pub-item">
+                    <div class="pub-kicker">Paper D · Adaptation Geometry</div>
+                    <div class="pub-main">
+                        <h3>Consensus-Target Linear Shrinkage</h3>
+                        <p>Finally, read how prompting behavior is reframed as a shrinkage law.</p>
+                    </div>
+                    <div class="pub-links">
+                        <a class="btn" href="paper_d.pdf">PDF</a>
+                        <a class="btn" href="https://doi.org/10.5281/zenodo.18883406">DOI</a>
+                    </div>
+                </article>
+            </div>
+        </section>
 
         <footer>
-            <p>&copy; 2026 Hyeong Rok Lee. All rights reserved.</p>
+            © 2025 Hyeong Rok Lee · All papers available on <a href="https://zenodo.org"
+                style="color: var(--blue); text-decoration: none;">Zenodo</a>.
         </footer>
     </div>
+
+    <div id="tooltip" role="tooltip"></div>
+
+    <script>
+        (() => {
+            const tooltip = document.getElementById('tooltip');
+            document.querySelectorAll('[data-tip]').forEach((node) => {
+                node.addEventListener('mouseenter', (event) => {
+                    const text = node.getAttribute('data-tip');
+                    if (!text) return;
+                    tooltip.textContent = text;
+                    tooltip.classList.add('show');
+                    tooltip.style.left = `${event.clientX + 12}px`;
+                    tooltip.style.top = `${event.clientY + 12}px`;
+                });
+
+                node.addEventListener('mousemove', (event) => {
+                    tooltip.style.left = `${event.clientX + 12}px`;
+                    tooltip.style.top = `${event.clientY + 12}px`;
+                });
+
+                node.addEventListener('mouseleave', () => {
+                    tooltip.classList.remove('show');
+                });
+            });
+        })();
+    </script>
 </body>
 
 </html>
