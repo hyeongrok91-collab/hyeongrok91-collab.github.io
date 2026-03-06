@@ -34,7 +34,7 @@
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="ECC & Intelligence Decomposition — Hyeong Rok Lee">
+    <meta name="twitter:title" content="ECC &amp; Intelligence Decomposition — Hyeong Rok Lee">
     <meta name="twitter:description"
         content="Effective Computational Capacity as the unique capacity measure. Intelligence = ECC × utilization.">
     <meta name="twitter:image" content="https://hyeongrok91-collab.github.io/og-image.png">
@@ -282,10 +282,20 @@
         <div class="boxed">$$\mathrm{Intelligence}(T) = \mathrm{ECC} \cdot \tau_{\mathrm{rep}} \cdot
             \tau_{\mathrm{stat}} \cdot \tau_{\mathrm{opt}},$$</div>
         <p>where $\tau_{\mathrm{rep}}$ is representational alignment, $\tau_{\mathrm{stat}}$ statistical efficiency, and
-            $\tau_{\mathrm{opt}}$ optimization quality. We prove a conditional coding theorem linking excess risk to an
-            aligned approximation dimension $k$, and we isolate the exact point at which a purely static bridge from ECC
-            to performance fails. The correct local bridge is a measurable residual-tail quantity $\eta_T(k)$ derived
-            from the pullback task metric $M_T = J_*^\top G_T J_*$.</p>
+            $\tau_{\mathrm{opt}}$ optimization quality. The operational identity</p>
+        <div class="boxed">$$\tau_{\mathrm{rep}} = \eta_{\mathrm{eff}} = \frac{k_{\mathrm{use}}}{\mathrm{ECC}}.$$</div>
+        <p>shows that $\mathrm{ECC}\tau_{\mathrm{rep}}$ is the usable task-aligned dimension. We then prove a
+            conditional coding theorem linking excess risk to an aligned approximation dimension $k$, and we isolate the
+            exact point at which a purely static bridge from ECC to performance fails. The correct local bridge is a
+            measurable residual-tail quantity $\eta_T(k)$ derived from the pullback task metric $M_T = J_*^\top G_T
+            J_*$. At a larger scale, performance obeys a six-term decomposition separating existence, geometry, slice
+            selection, reachability, generalization, and optimization.</p>
+        <p>Applications include a full ECC calculation for transformer attention including value and output maps, a
+            function-space derivation of FFN capacity, a proof that standard Mamba blocks have
+            $\mathrm{ECC} \approx \tfrac{1599}{256}d^2 \approx 6.246\,d^2$, a geometric account of LoRA and
+            catastrophic forgetting, a workload-aware compression and data-curation principle, a formal
+            coverage-efficiency split for universal versus specialized models, and a no-universal-$\tau_{\mathrm{rep}}$
+            theorem.</p>
 
 
         <!-- ===== 1. Introduction ===== -->
@@ -432,7 +442,7 @@
         <div class="theorem">
             <strong>Theorem (Mamba ECC).</strong> For a standard Mamba-style block with defaults $m=2d$, $N=16$, $k=4$,
             $r=\lceil d/16\rceil$:
-            $$\boxed{\mathrm{ECC}_{\mathrm{Mamba}} = 6.25d^2 + O(d).}$$
+            $$\boxed{\mathrm{ECC}_{\mathrm{Mamba}} = \tfrac{1599}{256}\,d^2 + O(d) \approx 6.246\,d^2 + O(d).}$$
         </div>
 
         <h3>4.6 Architectural comparison</h3>
@@ -464,7 +474,7 @@
             <tr>
                 <td>Mamba block</td>
                 <td>$3dm + m(k+3N+2r+3) - r^2 - N$</td>
-                <td>$6.25d^2 + O(d)$</td>
+                <td>$\tfrac{1599}{256}\,d^2 + O(d) \approx 6.246\,d^2 + O(d)$</td>
                 <td>$O(nd^2)$</td>
             </tr>
         </table>
@@ -709,7 +719,8 @@
             \tau_{\mathrm{opt}}.$$</div>
         <p>The product $\mathrm{ECC} \cdot \tau_{\mathrm{rep}}$ is exactly the usable task-aligned dimension. The
             pullback task metric $M_T = J_*^\top G_T J_*$ is the canonical local object, and its residual $\eta_T(k)$
-            provides a measurable local bridge from geometry to approximation error.</p>
+            provides a measurable local bridge from geometry to approximation error. Beyond the local regime, a six-term
+            decomposition separates existence, geometry, selection, reachability, generalization, and optimization.</p>
 
         <p>The slogan: Paper A defined the ceiling. This paper makes precise how much of the ceiling is used, why the
             unused part matters, and why alignment, not raw block capacity, is the deeper bottleneck.</p>
