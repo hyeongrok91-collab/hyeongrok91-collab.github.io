@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="esED81cLkhXtqoloRlvSAtnYPkHvSsup-XjL_yLTawk" />
+    <title>d² 풀백 정리 — 이형록</title>
+
+    <!-- Google Scholar meta tags -->
+    <meta name="citation_title" content="The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem">
+    <meta name="citation_author" content="Lee, Hyeong Rok">
+    <meta name="citation_date" content="2026/03">
+    <meta name="citation_publication_date" content="2026/03/01">
+    <meta name="citation_online_date" content="2026/03/01">
+    <meta name="citation_pdf_url" content="https://hyeongrok91-collab.github.io/paper_a.pdf">
+    <meta name="citation_doi" content="10.5281/zenodo.18842724">
+    <meta name="citation_language" content="en">
+    <meta name="citation_keywords"
+        content="attention mechanism; pullback theorem; Jacobian rank; bilinear score; polynomial attention; softmax replacement; squared attention; transformer; optimization geometry; d-squared">
+
+    <meta name="description"
+        content="d² 풀백 정리: 어텐션을 통한 손실의 그래디언트는 d²차원 쌍선형 부분공간에 놓인다. 정확한 야코비안 랭크와 동일 깊이 softmax→다항식 치환을 증명한다.">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="d² 풀백 정리: 어텐션은 왜 d²차원 문제인가">
+    <meta property="og:description" content="d² 풀백 정리: 최적화는 d²차원 쌍선형 부분공간에만 의존한다. 정확한 야코비안 랭크와 동일 깊이 softmax 치환.">
+    <meta property="og:url" content="https://hyeongrok91-collab.github.io/paper_a_kr.html">
+    <meta property="og:image" content="https://hyeongrok91-collab.github.io/og-image.png">
+    <meta property="og:site_name" content="이형록 연구">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="d² 풀백 정리 — 이형록">
+    <meta name="twitter:description" content="어텐션은 d²차원 문제다. 정확한 야코비안 랭크. 동일 깊이 다항식 치환. No-go 정리.">
+    <meta name="twitter:image" content="https://hyeongrok91-collab.github.io/og-image.png">
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f5f0e8;
+            --fg: #2c2420;
+            --muted: #8c8078;
+            --accent: #5b4636;
+            --border: #d0c8bc;
+            --card: #ebe4d8;
+            --theorem-bg: #ebe4d8;
+            --proof-bg: #f0ebe2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.8rem;
+            margin: 0 0 0.3rem;
+            line-height: 1.3;
+            color: var(--fg);
+        }
+
+        h2 {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.4rem;
+            margin: 2.5rem 0 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 1.8rem 0 0.7rem;
+            color: var(--accent);
+        }
+
+        h4 {
+            font-size: 1rem;
+            margin: 1.2rem 0 0.5rem;
+        }
+
+        p {
+            margin: 0 0 1rem;
+            color: var(--fg);
+        }
+
+        .meta {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--fg);
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            background: var(--card);
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .theorem,
+        .definition,
+        .proposition,
+        .remark,
+        .example,
+        .hypothesis {
+            background: var(--theorem-bg);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .theorem strong,
+        .definition strong,
+        .proposition strong,
+        .example strong,
+        .hypothesis strong {
+            color: var(--accent);
+        }
+
+        .proof {
+            background: var(--proof-bg);
+            border-left: 3px solid var(--border);
+            border-radius: 4px;
+            padding: 0.8rem 1.2rem;
+            margin: 0.8rem 0;
+            font-size: 0.95rem;
+        }
+
+        .proof-label {
+            font-style: italic;
+            color: var(--muted);
+        }
+
+        .remark {
+            border-left-color: var(--muted);
+        }
+
+        .remark strong {
+            color: var(--muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 0.5rem 0.7rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: var(--card);
+            color: var(--accent);
+        }
+
+        ul,
+        ol {
+            margin: 0 0 1rem 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.3rem;
+        }
+
+        .boxed {
+            background: var(--card);
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+            text-align: center;
+        }
+
+        .back {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .lang-toggle {
+            float: right;
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-decoration: none;
+        }
+
+        .lang-toggle:hover {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.2rem 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ScholarlyArticle",
+      "name": "The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem",
+      "headline": "The d² Pullback Theorem: Why Attention is a d²-Dimensional Problem",
+      "author": {"@type": "Person", "name": "Hyeong Rok Lee", "email": "rok@gahyeon.net"},
+      "datePublished": "2026-03-01",
+      "description": "d² 풀백 정리: 어텐션을 통한 손실의 그래디언트는 d²차원 쌍선형 부분공간에 놓인다.",
+      "url": "https://hyeongrok91-collab.github.io/paper_a_kr.html",
+      "sameAs": "https://doi.org/10.5281/zenodo.18842724",
+      "keywords": ["attention mechanism", "pullback theorem", "Jacobian rank", "polynomial attention", "softmax replacement", "transformer", "optimization geometry"],
+      "inLanguage": "ko",
+      "isAccessibleForFree": true,
+      "encoding": {"@type": "MediaObject", "contentUrl": "https://hyeongrok91-collab.github.io/paper_a.pdf", "encodingFormat": "application/pdf"}
+    }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+
+        <p class="back"><a href="index_kr.html">← 전체 논문 목록</a>
+            <a class="lang-toggle" href="paper_a.html">EN</a>
+        </p>
+
+        <h1>The d² Pullback Theorem: 어텐션은 왜 d²차원 문제인가</h1>
+        <div class="meta">이형록 · 2026년 3월 · Preprint</div>
+        <a class="btn" href="paper_a.pdf">📄 PDF</a>
+        <a class="btn" href="https://doi.org/10.5281/zenodo.18842724">🔗 DOI</a>
+
+        <!-- ===== 초록 ===== -->
+        <h2>초록</h2>
+        <p>셀프 어텐션은 모든 토큰 쌍을 생성하므로 흔히 $n \times n$ 연산으로 기술된다.
+            그러나 이것은 잘못된 고유 차원이다. 토큰 행렬 $X \in \mathbb{R}^{n \times d}$와
+            파라미터 곱 $M = W_Q W_K^\top \in \mathbb{R}^{d \times d}$를 가진 단일 헤드에서,
+            스코어 행렬은 다음 구속 쌍선형 형식을 따른다:</p>
+        $$S(M) = \frac{1}{\sqrt{d}} X M X^\top.$$
+        <p>첫 번째 결과는 <strong>d² 풀백 정리</strong>다. 행별 어텐션 맵을 통과하는 임의의
+            미분 가능한 손실에 대해, $M$에 대한 그래디언트는 정확히 샌드위치 변환
+            $X^\top G(M) X / \sqrt{d}$이다. 여기서 $G(M)$은 토큰-쌍 공간에서의 그래디언트다.
+            따라서 최적화는 쌍선형 스코어 부분공간
+            $\mathcal{S}_X = \{XAX^\top : A \in \mathbb{R}^{d \times d}\}$에만 의존하며,
+            그 차원은 $\mathrm{rank}(X)^2$이고, $X$가 전열 랭크이면 $d^2$이 된다.</p>
+        <p>두 번째 결과는 해석적 행 정규화기에 대한 정확한 국소 야코비안 랭크를 계산한다:</p>
+        $$\mathrm{rank}\, D_M P(0) = r(r - \varepsilon_X),$$
+        <p>여기서 $r = \mathrm{rank}(X)$, $\varepsilon_X = \dim(\mathrm{col}(X) \cap \mathrm{span}\{\mathbf{1}_n\})$이다.
+            표준 전랭크 체제에서 일반적 랭크는 $d^2$이다.</p>
+        <p>세 번째 결과는 컴팩트 유계 스코어 영역에서 softmax 어텐션을 <em>양의 다항식 어텐션</em>으로
+            동일 깊이에서 균등 치환할 수 있음을 증명한다. 이어서 각 차수-$p$ 다항식 블록을
+            $1 + O(\log p)$개의 차수-2 잔차 어텐션 하위 레이어로 교체할 수 있다는 시뮬레이션 가설을 정식화하고,
+            <strong>no-go 정리</strong>를 증명한다: 고정 폭 차수-2 범용 시뮬레이션은
+            $L(2w^2+3) \ge p$를 필요로 한다.
+        </p>
+
+
+        <!-- ===== 1. 도입 ===== -->
+        <h2>1. 도입</h2>
+        <p>어텐션은 신경 기계번역에서 정렬(alignment) 메커니즘으로 시작되었다.
+            트랜스포머는 이 정렬 메커니즘을 현대 시퀀스 모델의 핵심 계산 원시(primitive)로 전환했다.
+            이후 $n \times n$ 어텐션 행렬 생성의 이차 비용을 줄이려는 방대한 문헌이 등장했다.
+            지배적인 질문은 계산적이다: 정확도를 희생하지 않으면서 $n \times n$ 어텐션 행렬을
+            어떻게 근사하거나 회피할 것인가?</p>
+
+        <p>본 논문은 다른 질문을 던진다.
+            어텐션 최적화 문제의 <em>고유 차원(intrinsic dimension)</em>은 무엇인가?
+            단일 헤드에서 pre-softmax 스코어는 $d$차원의 쌍선형 형식으로 생성된다:</p>
+        $$S(M) = \frac{1}{\sqrt{d}} X M X^\top.$$
+        <p>따라서 pre-softmax 스코어 기하는 $n^2$이 아니라 최대 $d^2$개의 자유도에 의해 지배된다.</p>
+
+        <p>핵심 관찰은 최적화가 완전한 토큰-쌍 그래디언트를 직접 보지 않는다는 점이다.
+            연쇄 법칙에 의해 $M$에 대한 그래디언트는 토큰-쌍 그래디언트를
+            $X^\top$와 $X$ 사이에 끼워 넣어 얻어진다. 이는 $n^2$차원 토큰-쌍 세계에서
+            $d^2$차원 파라미터 세계로의 정밀한 풀백을 유도한다.</p>
+
+        <h3>주요 기여</h3>
+        <ol>
+            <li><strong>d² 풀백 정리:</strong> $M$에 대한 정확한 그래디언트는 풀백
+                $X^\top G(M) X / \sqrt{d}$이므로, 최적화는 차원 $\mathrm{rank}(X)^2$의 부분공간에만 의존한다.</li>
+            <li><strong>정확한 국소 야코비안 랭크</strong> — 해석적 행 정규화기에 대해:
+                $r(r - \varepsilon_X)$, 일반적으로 $d^2$.</li>
+            <li><strong>동일 깊이 양의 다항식 치환</strong> — 컴팩트 유계 스코어 영역에서 softmax를 무조건적으로 대체.</li>
+            <li><strong>조건부 깊이 보상:</strong> 차수-2 어텐션이 시뮬레이션 가설 하에서
+                차수-$p$ 다항식 어텐션을 총 $L + O(L \log p)$개의 하위 레이어로 모사.</li>
+            <li><strong>No-go 정리:</strong> 고정 폭 범용 시뮬레이션은 $L(2w^2+3) \ge p$를 필요로 한다.</li>
+        </ol>
+
+
+        <!-- ===== 2. 유클리드 매칭으로서의 어텐션 ===== -->
+        <h2>2. 유클리드 매칭으로서의 어텐션</h2>
+        <p>Pre-softmax 스코어 행렬 $C = QK^\top$은 $d$차원 잠재 공간을 통해 인수분해되므로
+            $\mathrm{rank}(C) \le d$이다. 내적 매칭은 가법 상수까지 유클리드 이분 매칭과 동등하다:</p>
+
+        <div class="proposition">
+            <strong>명제 (유클리드 매칭으로서의 어텐션).</strong>
+            $$\max_{\pi \in S_n} \sum_{i=1}^n q_i^\top k_{\pi(i)} = \frac{1}{2}\sum_i \|q_i\|^2 + \frac{1}{2}\sum_j
+            \|k_j\|^2 - \frac{1}{2}\min_{\pi} \sum_i \|q_i - k_{\pi(i)}\|^2.$$
+        </div>
+        <p>따라서 pre-softmax 어텐션 스코어는 $\mathbb{R}^d$에서의 유클리드 할당 기하를 인코딩한다.
+            Softmax는 이 스코어를 행 확률적 가중치로 변환하지만, 그 변환은 <em>랭크 팽창(rank-inflating)</em>이어서
+            근본적인 쌍선형 기하를 가린다.</p>
+
+
+        <!-- ===== 3. 풀백 정리 ===== -->
+        <h2>3. 마스터 풀백 정리</h2>
+
+        <div class="theorem">
+            <strong>정리 (마스터 풀백 정리).</strong> 쿼리 토큰 $X_h$, 키 토큰 $Y_h$,
+            스코어 행렬 $S_h(M_h) = \frac{1}{\sqrt{d_h}} X_h M_h Y_h^\top + B_h$,
+            그리고 손실 $\mathcal{J}$를 가진 각 어텐션 헤드 $h$에 대해:
+            $$\boxed{\nabla_{M_h} \mathcal{J} = \frac{1}{\sqrt{d_h}} X_h^\top G_h(M_h) Y_h.}$$
+            그래디언트는 쌍선형 풀백 부분공간 $\mathcal{S}_{X_h,Y_h} := \{X_h^\top A Y_h : A \in
+            \mathbb{R}^{n_q \times n_k}\}$에 놓이며, $\dim \mathcal{S}_{X_h,Y_h} = \mathrm{rank}(X_h) \cdot
+            \mathrm{rank}(Y_h)$이다.
+        </div>
+        <div class="proof">
+            <span class="proof-label">증명.</span> 연쇄 법칙에 의해 $D\mathcal{J}(M_h)[\Delta] = \langle G_h,
+            \frac{1}{\sqrt{d_h}} X_h \Delta Y_h^\top \rangle_F = \langle \frac{1}{\sqrt{d_h}} X_h^\top G_h Y_h, \Delta
+            \rangle_F$ (프로베니우스 수반 항등식). 차원에 대해서는 랭크 분해 $X_h = U_q R_q$,
+            $Y_h = U_k R_k$로부터 $\dim \mathcal{S} = r_q \cdot r_k$. ∎
+        </div>
+
+        <div class="remark">
+            <strong>비고 (최적화는 풀백만 본다).</strong> 두 토큰-쌍 그래디언트 $G_1, G_2$가
+            $\mathcal{S}_{X_h,Y_h}$에 직교하는 원소만큼 차이 나면, 동일한 파라미터 그래디언트를 유도한다.
+            따라서 최적화와 관련된 대상은 풀백이지, 완전한 $n^2$차원 장(field)이 아니다.
+        </div>
+
+        <div class="remark">
+            <strong>비고 (교차 어텐션의 차원은 더 낮다).</strong> 인코더 출력의 유효 랭크가
+            $r_k < d_h$이면, $\dim \mathcal{S}=r_q \cdot r_k < d_h^2$이다. 교차 어텐션이 자기 어텐션보다 빠르게 수렴하는 이유가 여기에 있다.</div>
+
+                <div class="proposition">
+                    <strong>따름정리 (2차 풀백).</strong> $\mathcal{J}$가 스코어 행렬에서 $C^2$이면,
+                    $M_h$에 대한 $\mathcal{J}$의 헤시안도 풀백 부분공간을 존중한다.
+                </div>
+
+
+                <!-- ===== 4. 일반적 랭크 정리 ===== -->
+                <h2>4. 일반적 랭크 정리</h2>
+
+                <h3>4.1 해석적 행 정규화기</h3>
+                <div class="theorem">
+                    <strong>정리 (정확한 국소 랭크 공식).</strong> 해석적 순열-등변 행 정규화기를 가진
+                    $P(M) = \Sigma(S(M))$에 대해, $r := \mathrm{rank}(X)$ 및
+                    $\varepsilon_X := \dim(\mathrm{col}(X) \cap \mathrm{span}\{\mathbf{1}_n\})$으로 정의하면:
+                    $$\boxed{\mathrm{rank}\, D_M P(0) = r(r - \varepsilon_X).}$$
+                    표준 전랭크 체제($\mathrm{rank}(X) = d$, $\mathbf{1}_n \notin \mathrm{col}(X)$)에서
+                    $\mathrm{rank}\, D_M P(0) = d^2$이다.
+                </div>
+                <div class="proof">
+                    <span class="proof-label">증명 개요.</span> 순열-등변성과 행 확률성에 의해
+                    $Ds(0) = \alpha \Pi_n$ (중심화 사영). 벡터화하면
+                    $\mathrm{rank}\, D_M P(0) = \mathrm{rank}(\Pi_n X) \cdot \mathrm{rank}(X) = (r - \varepsilon_X)
+                    \cdot r$.
+                    해석성 + 원점에서의 비영 소행렬식 → 전랭크 집합은 열려 있고 조밀하다. ∎
+                </div>
+
+                <h3>4.2 비임계 확장 ($x^2$ 포함)</h3>
+                <div class="theorem">
+                    <strong>정리 (비임계 일반적 랭크).</strong> 비임계 구간에서 $\phi(x)\phi'(x) \neq 0$인
+                    해석적 커널 $\phi$에 대해, 행 커널 방향 $\kappa(z) := \phi(z) \oslash \phi'(z)$와
+                    커널 번들 $\mathcal{K}_Z$를 정의한다. 증인점 $M_*$에서
+                    $\mathcal{S}_X \cap \mathcal{K}_Z = \{0\}$이면,
+                    $\mathrm{rank}\, D_M P(M_*) = d^2$이고 전랭크 집합은 열려 있고 조밀하다.
+                </div>
+
+                <h3>4.3 마스터 야코비안-랭크 정리 (통합)</h3>
+                <div class="theorem">
+                    <strong>정리 (마스터 야코비안-랭크 정리).</strong>
+                    $S(M) = \frac{1}{\sqrt{d}} XMX^\top + B$인 임의의 $P(M) = \Sigma(S(M))$에 대해:
+                    $$\boxed{\mathrm{rank}\, D_M P(M_*) = r^2 - \dim(\mathcal{S}_X \cap \ker D\Sigma(Z_*)).}$$
+                    가시 집합 $J_i$를 가진 마스킹/인과 어텐션에도 적용되며,
+                    $\ker D\Sigma$를 마스킹된 커널 번들 $\mathcal{K}_Z^J$로 대체하면 된다.
+                </div>
+
+                <h3>4.4 FFN 야코비안-스팬 한계</h3>
+                <div class="theorem">
+                    <strong>정리 (FFN 야코비안-스팬 한계).</strong>
+                    잔차 FFN $F(x) = x + W_2 \sigma(W_1 x + b_1) + b_2$에 대해:
+                    $$\mathrm{vec}(J_F(x) - I_d) = (W_1^\top \odot W_2) \sigma'(W_1 x + b_1),$$
+                    $$\dim \mathcal{J}_{\mathrm{FFN}} \le \mathrm{rank}(W_1^\top \odot W_2) \le \min(m, d^2).$$
+                </div>
+
+
+                <!-- ===== 5. 동일 깊이 치환 ===== -->
+                <h2>5. 동일 깊이 양의 다항식 치환</h2>
+                <div class="theorem">
+                    <strong>정리 (동일 깊이 양의 다항식 치환).</strong>
+                    유계 스코어 $|Z_{ij}| \le R$을 가진 컴팩트 집합 $\mathcal{K}$ 위의 잔차 softmax
+                    트랜스포머 스택 $T = B_{\exp,L} \circ \cdots \circ B_{\exp,1}$에 대해,
+                    임의의 $\varepsilon > 0$에 대해 양의 다항식 $P$
+                    (제곱 구성: $P(x) = R_q(x)^2 + \delta^2$)가 존재하여
+                    $\exp$ 대신 $P$를 사용하는 동일 깊이 스택 $\widetilde{T}$가 다음을 만족한다:
+                    $$\sup_{X \in \mathcal{K}} \|T(X) - \widetilde{T}(X)\|_\infty \le \varepsilon.$$
+                </div>
+                <p>증명은 바이어슈트라스 근사(스칼라 $\exp \to P$), 정규화 안정성(보조정리),
+                    레이어 간 텔레스코핑 하이브리드 논증을 결합한다.</p>
+
+
+                <!-- ===== 6. 깊이 보상 ===== -->
+                <h2>6. 차수-2 어텐션의 조건부 깊이 보상</h2>
+
+                <h3>잔차 이차 차수 성장</h3>
+                <p>각 잔차 하위 레이어의 차수가 $\le 2$이면, $m$개를 합성하면 차수 $\le 2^m$을 생성한다.
+                    따라서 원칙적으로 $m = O(\log p)$개의 하위 레이어면 차수 $p$에 도달한다.</p>
+
+                <div class="hypothesis">
+                    <strong>가설 (안정 시뮬레이션 가설).</strong> 컴팩트 집합 $\mathcal{K}$와
+                    차수-$p$ 양의 다항식 어텐션 블록 $B_P : \mathcal{K} \to \mathcal{K}$를 고정한다.
+                    상수 $c_0, c_1 > 0$과 $m \le c_0 + c_1 \log p$개의 이차 하위 레이어로 구성된
+                    잔차 스택 $\widehat{B}_{2,p,\zeta} = G_m \circ \cdots \circ G_1$이 존재하여,
+                    $\mathcal{K}$-불변성과 립시츠 제어를 보존하면서
+                    $\mathcal{K}$ 위에서 $B_P$를 정확도 $\zeta$로 균등 근사한다.
+                </div>
+
+                <div class="theorem">
+                    <strong>정리 (조건부 깊이 보상).</strong> 시뮬레이션 가설 하에서
+                    각 softmax 블록은 $1 + O(\log p)$개의 이차 잔차 하위 레이어로 교체될 수 있으며,
+                    총 깊이 $L + O(L \log p)$를 제공한다.
+                </div>
+
+
+                <!-- ===== 7. No-Go 정리 ===== -->
+                <h2>7. 범용 차수-2 시뮬레이션의 No-Go 정리</h2>
+
+                <div class="theorem">
+                    <strong>정리 (범용 차수-2 시뮬레이션의 No-go).</strong>
+                    고정 보조 폭 $w$와 $L$개 레이어(총 파라미터 $N = L(2w^2+3)$)를 가진 표준 차수-2 스택을 고정한다.
+                    이 스택이 테스트 입력에서 차수-$p$ 앵커된 양의 다항식 타깃 패밀리를 임의의 정밀도로
+                    균등 근사할 수 있으면:
+                    $$\boxed{N \ge p.}$$
+                </div>
+                <div class="proof">
+                    <span class="proof-label">증명 아이디어.</span> 타깃 패밀리는 서로 다른 앵커된 다항식 계수를
+                    제어하는 $p$개의 자유 파라미터를 가진다. 반데르몬트 논증으로 이 파라미터들이 $p$차원 상을 추적함을 보인다.
+                    차수-2 스택 맵은 $N$개 파라미터의 유리 함수이므로, 그 상은 차원 $\le N$인 반대수적 집합이다.
+                    스택 상이 타깃 상에서 조밀하면, 반대수적 차원 이론(타르스키-자이덴베르크)에 의해
+                    $N \ge p$. ∎
+                </div>
+
+                <div class="proposition">
+                    <strong>따름정리 (폭-깊이 트레이드오프).</strong> $w = O(1)$인 표준 차수-2 스택에서
+                    필요한 깊이는 $L \ge p/(2w^2+3) = \Omega(p)$이다.
+                    로그 깊이는 폭이 $p$와 함께 증가해야만 충분하다.
+                </div>
+
+                <p><strong>핵심 구조적 메시지:</strong> 차수-2 어텐션은 <em>최적화에는 충분</em>하지만
+                    (동일한 $d^2$ 경관), <em>시뮬레이션에는 불충분</em>하다
+                    (고정 폭에서 임의의 다항식 어텐션을 범용 복제할 수 없다).</p>
+
+
+                <!-- ===== 8. O(nd³) 제곱 어텐션 ===== -->
+                <h2>8. $O(nd^3)$ 제곱 어텐션 블록</h2>
+                <p>비정규화 제곱 어텐션 분자 $Y_i = \sum_j (q_i^\top k_j)^2 v_j$는
+                    사전 계산된 텐서를 통한 정확한 인수분해를 허용한다:</p>
+                $$T_{ab} = \sum_{j=1}^n k_{ja} k_{jb} v_j, \quad Y_i = \sum_{a,b=1}^d q_{ia} q_{ib} T_{ab},$$
+                <p>이로써 $O(nd^2 d_v)$ 복잡도, 즉 $d_v = d$일 때 $O(nd^3)$을 달성한다.</p>
+
+                <table>
+                    <tr>
+                        <th>메커니즘</th>
+                        <th>헤드당 시간</th>
+                        <th>필요 블록 수</th>
+                        <th>상태</th>
+                    </tr>
+                    <tr>
+                        <td>Softmax 어텐션</td>
+                        <td>$O(n^2 d)$</td>
+                        <td>$L$</td>
+                        <td>기준선</td>
+                    </tr>
+                    <tr>
+                        <td>양의 다항식 (차수 $p$)</td>
+                        <td>$O(n r_p d_v)$</td>
+                        <td>$L$</td>
+                        <td>동일 깊이 치환 (정리 5)</td>
+                    </tr>
+                    <tr>
+                        <td>제곱 어텐션 ($p=2$)</td>
+                        <td>$O(nd^3)$</td>
+                        <td>$L + O(L\log p)$</td>
+                        <td>조건부 깊이 보상 (정리 6)</td>
+                    </tr>
+                </table>
+
+
+                <!-- ===== 9. 실험 ===== -->
+                <h2>9. 실험</h2>
+
+                <h3>9.1 정리의 수치 검증</h3>
+                <ul>
+                    <li><strong>풀백 정리 검증:</strong> 배정밀도에서 상대 프로베니우스 오차 $\sim 10^{-16}$.</li>
+                    <li><strong>일반적 랭크 정리:</strong> 테스트한 모든 $(r, \varepsilon_X)$ 조합에서
+                        $r(r-\varepsilon_X)$ 예측과 정확히 일치.</li>
+                    <li><strong>동일 깊이 치환:</strong> 차수-24 양의 다항식이 커널 교체 테스트에서
+                        정확도와 로짓을 보존 ($< 10^{-3}$ 최대 편차).</li>
+                </ul>
+
+                <h3>9.2 토이 인과 검색</h3>
+                <table>
+                    <tr>
+                        <th>커널</th>
+                        <th>손실</th>
+                        <th>정확도</th>
+                        <th>max|Z|</th>
+                    </tr>
+                    <tr>
+                        <td>Softmax</td>
+                        <td>0.0008</td>
+                        <td>1.000</td>
+                        <td>42.25</td>
+                    </tr>
+                    <tr>
+                        <td>Raw square ($z^2$)</td>
+                        <td>2.52</td>
+                        <td>0.145</td>
+                        <td>55.33</td>
+                    </tr>
+                    <tr>
+                        <td>CSQ (prefix-centered)</td>
+                        <td>0.0004</td>
+                        <td>1.000</td>
+                        <td>18.01</td>
+                    </tr>
+                    <tr>
+                        <td>Hybrid (CSQ/softmax)</td>
+                        <td>0.0004</td>
+                        <td>1.000</td>
+                        <td>25.78</td>
+                    </tr>
+                </table>
+                <p>CSQ는 현저히 작은 스코어 크기로 비교 가능하거나 더 나은 정확도를 달성한다.</p>
+
+                <h3>9.3 풀백 인지 증류</h3>
+                <table>
+                    <tr>
+                        <th>증류 손실</th>
+                        <th>손실</th>
+                        <th>정확도</th>
+                        <th>Attn-rel</th>
+                        <th>PB-norm</th>
+                    </tr>
+                    <tr>
+                        <td>없음</td>
+                        <td>2.76</td>
+                        <td>0.147</td>
+                        <td>0.983</td>
+                        <td>1230</td>
+                    </tr>
+                    <tr>
+                        <td>Attn KL</td>
+                        <td>0.009</td>
+                        <td>1.000</td>
+                        <td>0.711</td>
+                        <td>630</td>
+                    </tr>
+                    <tr>
+                        <td>Pullback</td>
+                        <td>0.008</td>
+                        <td>1.000</td>
+                        <td>0.648</td>
+                        <td>613</td>
+                    </tr>
+                    <tr>
+                        <td>KL + pullback</td>
+                        <td>0.008</td>
+                        <td>1.000</td>
+                        <td>0.615</td>
+                        <td>614</td>
+                    </tr>
+                </table>
+                <p>KL + pullback 결합 증류가 동일한 하류 정확도에서 가장 작은 어텐션-맵 오차를 산출한다.</p>
+
+
+                <!-- ===== 10. 논의 ===== -->
+                <h2>10. 논의</h2>
+
+                <h4>본 정리가 증명하는 것</h4>
+                <p>정리 1은 정확한 최적화 관련 대상(샌드위치 변환)을 식별한다.
+                    정리 2는 대응하는 야코비안 랭크가 일반적으로 $d^2$임을 보인다.
+                    정리 3은 동일 깊이 softmax→다항식 치환을 증명한다.
+                    정리 4는 차수-2 문제를 시뮬레이션 가설로 분리한다.
+                    정리 5는 고정 폭 시뮬레이션에 대한 무조건적 $\Omega(p)$ 하한을 확립한다.</p>
+
+                <h4>본 정리가 증명하지 않는 것</h4>
+                <p>깊이만으로 다항식 어텐션의 훈련 안정성이 해결됨을 보이지는 <em>않는다</em>.
+                    안정성은 적절한 스케일링과 정규화를 필요로 한다.
+                    본 정리들은 표현력과 최적화 차원에 관한 결과이며, 안정성은 별도의 설계 제약이다.</p>
+
+                <h4>핵심 개념적 요점</h4>
+                <p>어텐션은 $n \times n$ 행렬 연산으로 일차적으로 이해되어서는 안 된다.
+                    어텐션은 $n^2$차원 렌더링을 통해 관찰되는
+                    <strong>쌍선형 $d^2$차원 문제</strong>로 이해되어야 한다.
+                </p>
+
+
+                <!-- ===== 참고문헌 ===== -->
+                <h2>참고문헌</h2>
+                <ol>
+                    <li>Bahdanau, Cho, Bengio. "Neural Machine Translation by Jointly Learning to Align and Translate."
+                        ICLR 2015.</li>
+                    <li>Vaswani et al. "Attention Is All You Need." NeurIPS 2017.</li>
+                    <li>Katharopoulos et al. "Transformers are RNNs: Fast Autoregressive Transformers with Linear
+                        Attention." ICML 2020.</li>
+                    <li>Choromanski et al. "Rethinking Attention with Performers." ICLR 2021.</li>
+                    <li>Henry, Marchetti, Kohn. "Geometry of Lightning Self-Attention." ICLR 2025.</li>
+                    <li>Keles et al. "On the Computational Complexity of Self-Attention." ALT 2023.</li>
+                    <li>Nauen et al. "TaylorShift." NeurIPS 2024.</li>
+                    <li>Saratchandran et al. "Rethinking Attention." 2024.</li>
+                    <li>Aggarwal et al. "Optimal Polynomial Approximation." 2022.</li>
+                </ol>
+
+                <p style="margin-top:3rem; color: var(--muted); font-size: 0.85rem; text-align: center;">
+                    © 2026 이형록 · <a href="mailto:rok@gahyeon.net">rok@gahyeon.net</a> · <a
+                        href="mailto:hyeongrok91@gmail.com">hyeongrok91@gmail.com</a> · <a href="index_kr.html">홈</a>
+                </p>
+
+        </div>
+</body>
+
+</html>

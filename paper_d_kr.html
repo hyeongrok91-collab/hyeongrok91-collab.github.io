@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="esED81cLkhXtqoloRlvSAtnYPkHvSsup-XjL_yLTawk" />
+    <title>합의-표적 선형 수축: 그래디언트-그람 공간에서의 ICL 기하 — 이형록</title>
+
+    <!-- Google Scholar meta tags -->
+    <meta name="citation_title"
+        content="Consensus-Target Linear Shrinkage: The Geometry of In-Context Learning in the Gradient-Gram Space">
+    <meta name="citation_author" content="Lee, Hyeong Rok">
+    <meta name="citation_date" content="2026/03">
+    <meta name="citation_publication_date" content="2026/03/06">
+    <meta name="citation_online_date" content="2026/03/06">
+    <meta name="citation_pdf_url" content="https://hyeongrok91-collab.github.io/paper_d.pdf">
+    <meta name="citation_doi" content="10.5281/zenodo.18883406">
+    <meta name="citation_language" content="en">
+    <meta name="citation_keywords"
+        content="in-context learning; gradient-Gram space; linear shrinkage; effective rank; cone law; adaptation geometry; consensus target">
+
+    <meta name="description"
+        content="ICL은 그래디언트-그람 행렬에서 합의-표적 선형 수축을 수행한다: G^P = α_P J + (1−α_P) G^r. 8개 아키텍처에 걸친 교차 모델 검증. 상수-ECC 리프 위의 적응 원뿔 법칙.">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="합의-표적 선형 수축 — 이형록">
+    <meta property="og:description" content="인컨텍스트 학습의 기하: 그래디언트-그람 공간에서의 합의-표적 수축. α_P가 ICL의 마스터 변수이다.">
+    <meta property="og:url" content="https://hyeongrok91-collab.github.io/paper_d_kr.html">
+    <meta property="og:image" content="https://hyeongrok91-collab.github.io/og-image.png">
+    <meta property="og:site_name" content="이형록 연구">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="합의-표적 선형 수축 — 이형록">
+    <meta name="twitter:description" content="ICL = 합의-표적 수축. α_P가 R² > 0.98로 압축을 지배. 8개 아키텍처에서 검증.">
+    <meta name="twitter:image" content="https://hyeongrok91-collab.github.io/og-image.png">
+
+    <!-- KaTeX -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f5f0e8;
+            --fg: #2c2420;
+            --muted: #8c8078;
+            --accent: #5b4636;
+            --border: #d0c8bc;
+            --card: #ebe4d8;
+            --theorem-bg: #ebe4d8;
+            --proof-bg: #f0ebe2;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        h1 {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.8rem;
+            margin: 0 0 0.3rem;
+            line-height: 1.3;
+            color: var(--fg);
+        }
+
+        h2 {
+            font-family: 'EB Garamond', serif;
+            font-size: 1.4rem;
+            margin: 2.5rem 0 1rem;
+            padding-bottom: 0.4rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            margin: 1.8rem 0 0.7rem;
+            color: var(--accent);
+        }
+
+        h4 {
+            font-size: 1rem;
+            margin: 1.2rem 0 0.5rem;
+        }
+
+        p {
+            margin: 0 0 1rem;
+            color: var(--fg);
+        }
+
+        .meta {
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.35rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--fg);
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .btn:hover {
+            border-color: var(--accent);
+            background: var(--card);
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .theorem,
+        .definition,
+        .proposition,
+        .remark,
+        .example,
+        .corollary,
+        .assumption {
+            background: var(--theorem-bg);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 1rem 1.2rem;
+            margin: 1.2rem 0;
+        }
+
+        .theorem strong,
+        .definition strong,
+        .proposition strong,
+        .example strong,
+        .corollary strong,
+        .assumption strong {
+            color: var(--accent);
+        }
+
+        .proof {
+            background: var(--proof-bg);
+            border-left: 3px solid var(--border);
+            border-radius: 4px;
+            padding: 0.8rem 1.2rem;
+            margin: 0.8rem 0;
+            font-size: 0.95rem;
+        }
+
+        .proof-label {
+            font-style: italic;
+            color: var(--muted);
+        }
+
+        .remark {
+            border-left-color: var(--muted);
+        }
+
+        .remark strong {
+            color: var(--muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            padding: 0.5rem 0.7rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background: var(--card);
+            color: var(--accent);
+        }
+
+        ul,
+        ol {
+            margin: 0 0 1rem 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.3rem;
+        }
+
+        .boxed {
+            background: var(--card);
+            border: 1px solid var(--accent);
+            border-radius: 6px;
+            padding: 0.8rem 1rem;
+            margin: 0.8rem 0;
+            text-align: center;
+        }
+
+        .back {
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .lang-toggle {
+            float: right;
+            font-size: 0.85rem;
+            color: var(--muted);
+            text-decoration: none;
+        }
+
+        .lang-toggle:hover {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.2rem 0;
+        }
+
+        blockquote {
+            border-left: 3px solid var(--muted);
+            padding: 0.5rem 1rem;
+            margin: 1rem 0;
+            color: var(--muted);
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ScholarlyArticle",
+      "name": "Consensus-Target Linear Shrinkage: The Geometry of In-Context Learning in the Gradient-Gram Space",
+      "headline": "Consensus-Target Linear Shrinkage: The Geometry of In-Context Learning in the Gradient-Gram Space",
+      "author": {"@type": "Person", "name": "Hyeong Rok Lee", "email": "rok@gahyeon.net"},
+      "datePublished": "2026-03-06",
+      "description": "ICL은 그래디언트-그람 행렬에서 합의-표적 선형 수축을 수행한다. 8개 아키텍처 교차 모델 검증.",
+      "url": "https://hyeongrok91-collab.github.io/paper_d_kr.html",
+      "sameAs": "https://doi.org/10.5281/zenodo.18883406",
+      "keywords": ["in-context learning", "gradient-Gram space", "linear shrinkage", "effective rank", "cone law"],
+      "inLanguage": "ko",
+      "isAccessibleForFree": true,
+      "encoding": {"@type": "MediaObject", "contentUrl": "https://hyeongrok91-collab.github.io/paper_d.pdf", "encodingFormat": "application/pdf"}
+    }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+
+        <p class="back"><a href="index_kr.html">← 전체 논문 목록</a>
+            <a class="lang-toggle" href="paper_d.html">EN</a>
+        </p>
+
+        <h1>합의-표적 선형 수축: 그래디언트-그람 공간에서의 인컨텍스트 학습 기하</h1>
+        <div class="meta">이형록 · 2026년 3월 · Preprint</div>
+        <a class="btn" href="paper_d.pdf">📄 PDF</a>
+        <a class="btn" href="https://doi.org/10.5281/zenodo.18883406">🔗 DOI</a>
+
+        <!-- ===== 초록 ===== -->
+        <h2>초록</h2>
+        <p>인컨텍스트 학습(ICL)은 프롬프트 내 과제 예시를 통해 언어 모델의 성능을 향상시키는 것으로
+            널리 관찰되지만, ICL이 모델 내부 기하에 <em>정확히 무엇을 하는지</em>에 대한 수학적 규명은
+            미해결이었다. 공유-성분 분해 하에서, ICL은 과제-그래디언트 그람 행렬에 대한
+            <strong>합의-표적 선형 수축</strong>을 수행한다:
+        </p>
+        <div class="boxed">$$G^P = \alpha_P\, J + (1-\alpha_P)\,G^r, \qquad \alpha_P = \frac{\|a_P\|^2}{\|a_P\|^2 +
+            r^2},$$</div>
+        <p>여기서 $G^P$와 $G^r$은 프리픽스 유무에 따른 그래디언트-코사인 그람 행렬이고,
+            $J$는 전-1(all-ones) 합의 표적이며, $\alpha_P \in [0,1]$은 <em>적응 파라미터</em>이다.
+            이 항등식은 <strong>직교 수축 법칙</strong>을 함축한다:
+            비합의 기하가 정확히 $(1-\alpha_P)$만큼 수축하며,
+            <strong>유효-랭크 상한</strong>: $\mathrm{erank}(G^P) \le \exp(h(\alpha_P))\cdot(n-1)^{1-\alpha_P}$이 성립한다.
+        </p>
+        <p>5개 과제에 걸친 65점 스윕에서 압축비가 $\alpha_P$의 거의 결정론적 함수임을 확인하며
+            (과제별 $R^2 > 0.98$), $\alpha_P$를 ICL의 <em>마스터 변수</em>로 확립한다.
+            8개 아키텍처(GPT-2~Phi-2, 117M–2.7B 파라미터, 2019–2025)에 대한 교차 모델 검증에서
+            모든 경우 예측 오차가 3% 미만이다.</p>
+        <p>Paper B의 지능 분해와 결합하면, $\alpha_P$는 압축 법칙($\Delta\tau_{\mathrm{rep}}$)을 지배하고,
+            과제 의존적 품질 인자 $Q$는 가변 보상($\Delta Q$)을 지배한다.
+            이 둘이 함께 상수-ECC 리프 위의 <strong>적응 원뿔 법칙</strong>을 산출하며,
+            $(\Delta\log\tau_{\mathrm{rep}},\, \Delta\log Q)$ 평면에서
+            지능을 향상시키는 적응을 기하학적 원뿔로 구속한다.</p>
+
+
+        <!-- ===== 1. 도입 ===== -->
+        <h2>1. 도입</h2>
+
+        <h3>1.1 맥락과 동기</h3>
+        <p>인컨텍스트 학습 — 프롬프트 내 입출력 예시를 제시하면 대규모 언어 모델이
+            과제 성능을 향상시키는 능력 — 은 현대 AI에서 가장 두드러진 창발적 능력 중 하나이다.
+            광범위한 연구에도 불구하고, ICL이 모델의 내부 계산 기하에 <em>무엇을 하는지</em>
+            기술하는 정량적 법칙이 부재했다.</p>
+        <p>본 논문은 그러한 법칙을 제안한다. <strong>그래디언트-그람 공간</strong>에서 작업한다:
+            $n$개 과제 입력에 대해 입력별 손실 그래디언트를 계산하고
+            그 코사인-유사도 그람 행렬을 구성한다.
+            이 대상은 모델의 응답이 서로 다른 입력에 걸쳐 얼마나 "정렬"되어 있는지를 부호화한다.</p>
+
+        <h3>1.2 세 편의 논문</h3>
+        <table>
+            <tr>
+                <th>논문</th>
+                <th>알려진 계산</th>
+                <th>수학적 구조</th>
+                <th>핵심 결과</th>
+            </tr>
+            <tr>
+                <td><a href="paper_a_kr.html">A</a></td>
+                <td>어텐션 = softmax$(QK^\top)V$</td>
+                <td>유클리드 이분 매칭</td>
+                <td>$\mathrm{rank}(\nabla M) = d^2$</td>
+            </tr>
+            <tr>
+                <td><a href="paper_b_kr.html">B</a></td>
+                <td>손실이 성능을 측정</td>
+                <td>곱 분해</td>
+                <td>$I = \mathrm{ECC} \times \tau$ (유일)</td>
+            </tr>
+            <tr>
+                <td><strong>D (본 논문)</strong></td>
+                <td><strong>ICL = 프리픽스가 성능 향상</strong></td>
+                <td><strong>합의-표적 수축</strong></td>
+                <td>$P_\perp G^P P_\perp = (1-\alpha_P)\, P_\perp G^r P_\perp$</td>
+            </tr>
+        </table>
+        <p>Paper A는 상태 공간 차원($d^2$)을 식별했다. Paper B는 상태 방정식($I =
+            \mathrm{ECC} \cdot \tau_{\mathrm{rep}} \cdot Q$)을 확립했다.
+            Paper D는 <em>운동 방정식</em>을 발견한다: 상수-ECC 리프를 따라
+            적응이 상태를 어떻게 변화시키는가.</p>
+
+        <h3>1.3 직관에 반하는 발견</h3>
+        <blockquote>ICL은 그래디언트 기하를 <em>압축</em>한다. 유효 랭크가 2.09에서 1.25로 떨어진다
+            (산술 과제, Qwen3-0.6B). 그런데도 지능은 201% 증가한다.</blockquote>
+        <p>해소는 다음과 같다: 압축은 정보 손실이 아니라 <em>합의 형성</em>이다.
+            프리픽스가 그래디언트를 공유된 과제 방향으로 정렬시켜,
+            다양성을 일관성 쪽으로 축소시킨다. 이후 Paper B의 품질 인자 $Q$가
+            표현적 손실을 초과 보상한다.</p>
+
+        <h3>1.4 기여</h3>
+        <ol>
+            <li><strong>조건부 그람 분해</strong>: $G^P = \alpha_P J + (1-\alpha_P)G^r$,
+                전형적 재구성 오차 1–3%.</li>
+            <li><strong>직교 수축 법칙</strong>: $P_\perp G^P P_\perp = (1-\alpha_P) P_\perp G^r P_\perp$.</li>
+            <li><strong>유효-랭크 엔트로피 상한</strong>: $\mathrm{erank}(G^P) \le \exp(h(\alpha_P)) \cdot
+                (n-1)^{1-\alpha_P}$.</li>
+            <li><strong>마스터 변수 식별</strong>: $\alpha_P$가 65개 조건에 걸쳐
+                과제별 $R^2 > 0.98$로 압축을 예측.</li>
+            <li><strong>교차 모델 검증</strong>: 수축 법칙이 4개 아키텍처 계열에 걸친
+                8개 모델에서 검증.</li>
+            <li><strong>적응 원뿔 법칙</strong>: 상수-ECC 리프 위에서
+                ICL과 파인튜닝이 상보적 원뿔을 점유.</li>
+        </ol>
+
+
+        <!-- ===== 2. 수축 정리 ===== -->
+        <h2>2. 합의-표적 수축 정리</h2>
+
+        <h3>2.1 설정과 표기</h3>
+        <p>파라미터 $\theta$와 대상 파라미터 모듈을 가진 사전훈련 언어 모델을 고정한다.
+            $n$개 과제 입력 $\{x_1,\ldots,x_n\}$이 주어지면 다음을 정의한다:</p>
+        <ul>
+            <li>$u_i^r = \nabla_\theta \mathcal{L}(x_i) / \|\nabla_\theta \mathcal{L}(x_i)\|_2$:
+                프리픽스 없는("원시") $\ell_2$-정규화 그래디언트.</li>
+            <li>$u_i^P = \nabla_\theta \mathcal{L}(\mathrm{prefix} \circ x_i) / \|\nabla_\theta
+                \mathcal{L}(\mathrm{prefix} \circ x_i)\|_2$:
+                프리픽스 포함 $\ell_2$-정규화 그래디언트.</li>
+        </ul>
+        <p><strong>그래디언트-그람 행렬</strong>은 다음과 같다:</p>
+        $$G^r_{ij} = \langle u_i^r, u_j^r \rangle, \qquad G^P_{ij} = \langle u_i^P, u_j^P \rangle.$$
+        <p>둘 다 단위 대각을 가진 $n \times n$ 양의 반정부호 행렬이다.</p>
+
+        <div class="definition">
+            <strong>정의 (합의 표적).</strong> $J \in \mathbb{R}^{n \times n}$은 전-1 행렬이다:
+            모든 $i,j$에 대해 $J_{ij} = 1$. 이는 완전한 합의 — 모든 그래디언트가 완벽히 정렬됨 — 를 나타낸다.
+        </div>
+
+        <h3>2.2 조건부 그람 분해</h3>
+        <div class="theorem">
+            <strong>정리 (합의-표적 선형 수축).</strong> 각 프리픽스 그래디언트가
+            $$u_i^P = a_P + r_i, \qquad a_P \perp r_i, \qquad \|r_i\| = r \quad \text{(상수)},$$
+            로 분해되며, $a_P$가 공유 합의 성분이고 $r_i$가 잔차이며,
+            $G^r_{ij} = \langle r_i, r_j \rangle / r^2$로 동일시된다고 하자. $r > 0$일 때:
+            $$\boxed{G^P = \alpha_P\, J + (1-\alpha_P)\,G^r, \qquad \alpha_P = \frac{\|a_P\|^2}{\|a_P\|^2 + r^2}.}$$
+            $r = 0$이면 모든 $u_i^P = a_P$가 동일하므로, $\alpha_P = 1$이고 $G^P = J$이다.
+        </div>
+        <div class="proof">
+            <span class="proof-label">증명.</span> 직교성에 의해 $\|u_i^P\|^2 = \|a_P\|^2 + r^2 =: s^2$이므로:
+            $$G^P_{ij} = \langle u_i^P, u_j^P \rangle = \frac{1}{s^2}\big(\|a_P\|^2 + \langle r_i, r_j \rangle\big) =
+            \frac{\|a_P\|^2}{s^2} + \frac{r^2}{s^2} \cdot \frac{\langle r_i, r_j \rangle}{r^2} = \alpha_P \cdot 1 +
+            (1-\alpha_P) \cdot G^r_{ij}.$$
+            행렬 형식으로, $G^P = \alpha_P J + (1-\alpha_P)G^r$. ∎
+        </div>
+
+        <div class="remark">
+            <strong>비고 (직교성 가정의 품질).</strong> 가정 $a_P \perp r_i$는 근사적으로 성립한다.
+            직접 측정 결과:
+        </div>
+        <table>
+            <tr>
+                <th>과제</th>
+                <th>$\max_i|\cos(a_P, r_i)|$</th>
+                <th>CV$(\|r_i\|)$</th>
+                <th>적합 오차</th>
+            </tr>
+            <tr>
+                <td>사실 QA</td>
+                <td>0.037</td>
+                <td>0.048</td>
+                <td>1.5%</td>
+            </tr>
+            <tr>
+                <td>감성</td>
+                <td>0.116</td>
+                <td>0.196</td>
+                <td>2.5%</td>
+            </tr>
+            <tr>
+                <td>단어 유추</td>
+                <td>0.120</td>
+                <td>0.193</td>
+                <td>4.5%</td>
+            </tr>
+            <tr>
+                <td>산술</td>
+                <td>0.128</td>
+                <td>0.268</td>
+                <td>1.3%</td>
+            </tr>
+            <tr>
+                <td>번역</td>
+                <td>0.294</td>
+                <td>0.257</td>
+                <td>9.1%</td>
+            </tr>
+        </table>
+
+        <h3>2.3 직교 수축 법칙</h3>
+        <div class="theorem">
+            <strong>정리 (직교 수축).</strong> $u = \frac{1}{\sqrt{n}}\mathbf{1}$이고
+            $P_\perp = I - uu^\top$으로 놓으면:
+            $$\boxed{P_\perp G^P P_\perp = (1-\alpha_P) \cdot P_\perp G^r P_\perp.}$$
+        </div>
+        <div class="proof">
+            <span class="proof-label">증명.</span> $P_\perp J P_\perp = P_\perp(n\,uu^\top)P_\perp = n(P_\perp
+            u)(u^\top P_\perp) = 0$이므로:
+            $$P_\perp G^P P_\perp = P_\perp\big[\alpha_P J + (1-\alpha_P)G^r\big]P_\perp = \alpha_P \cdot 0 +
+            (1-\alpha_P) P_\perp G^r P_\perp = (1-\alpha_P) P_\perp G^r P_\perp. \qquad \square$$
+        </div>
+        <div class="remark">
+            <strong>비고 (물리적 해석).</strong> 합의 방향 $\mathbf{1}/\sqrt{n}$이
+            "공유 신호"를 흡수한다. 이에 직교하는 모든 것 — 전체 비합의 기하 — 은
+            인자 $(1-\alpha_P)$만큼 수축한다. $\alpha_P = 0.966$에서
+            원래 구조의 3.4%만 생존한다.
+        </div>
+
+        <h3>2.4 유효-랭크 엔트로피 상한</h3>
+        <div class="corollary">
+            <strong>따름정리 (유효 랭크에 대한 엔트로피 상한).</strong> 모든 $k < n$에 대해 누적-중첩 조건 $\eta_k \ge s_k$ 하에서, Ky Fan 변분 원리가 다음을
+                함축한다: $$\boxed{\mathrm{erank}(G^P) \le \exp(h(a)) \cdot (n-1)^{1-a},}$$ 여기서 $a=p_1^P=\lambda_1(G^P)/n$이고
+                $h(a)=-a\log a - (1-a)\log(1-a)$는 이진 엔트로피이다. </div>
+
+                <h3>2.5 교차 모델 검증</h3>
+                <table>
+                    <tr>
+                        <th>모델</th>
+                        <th>크기</th>
+                        <th>연도</th>
+                        <th>$\alpha_P$</th>
+                        <th>예측 오차</th>
+                        <th>erank (원시→프리픽스)</th>
+                    </tr>
+                    <tr>
+                        <td>GPT-2</td>
+                        <td>117M</td>
+                        <td>2019</td>
+                        <td>0.902</td>
+                        <td>1.3%</td>
+                        <td>5.26 → 1.36</td>
+                    </tr>
+                    <tr>
+                        <td>GPT-2 medium</td>
+                        <td>345M</td>
+                        <td>2019</td>
+                        <td>0.924</td>
+                        <td>1.3%</td>
+                        <td>6.16 → 1.32</td>
+                    </tr>
+                    <tr>
+                        <td>Qwen2.5-0.5B</td>
+                        <td>500M</td>
+                        <td>2024</td>
+                        <td>0.932</td>
+                        <td>1.4%</td>
+                        <td>4.21 → 1.23</td>
+                    </tr>
+                    <tr>
+                        <td>Qwen3-0.6B</td>
+                        <td>600M</td>
+                        <td>2025</td>
+                        <td>0.846</td>
+                        <td>1.3%</td>
+                        <td>2.11 → 1.15</td>
+                    </tr>
+                    <tr>
+                        <td>TinyLlama</td>
+                        <td>1.1B</td>
+                        <td>2023</td>
+                        <td>0.895</td>
+                        <td>1.7%</td>
+                        <td>4.71 → 1.36</td>
+                    </tr>
+                    <tr>
+                        <td>DeepSeek-R1-Distill</td>
+                        <td>1.5B</td>
+                        <td>2025</td>
+                        <td>0.824</td>
+                        <td>0.7%</td>
+                        <td>2.16 → 1.23</td>
+                    </tr>
+                    <tr>
+                        <td>SmolLM2</td>
+                        <td>1.7B</td>
+                        <td>2024</td>
+                        <td>0.904</td>
+                        <td>1.6%</td>
+                        <td>4.39 → 1.34</td>
+                    </tr>
+                    <tr>
+                        <td>Phi-2</td>
+                        <td>2.7B</td>
+                        <td>2023</td>
+                        <td>0.844</td>
+                        <td>2.6%</td>
+                        <td>6.49 → 1.78</td>
+                    </tr>
+                </table>
+                <p>보편성은 단순한 경험적 폭이 아닌 구조적이다:
+                    공유-성분 분해 $u_i^P = a_P + r_i$가 성립하면,
+                    아핀 법칙이 대수적으로 따르며 아키텍처 세부 사항에 의존하지 않는다.</p>
+
+
+                <!-- ===== 3. 마스터 변수 ===== -->
+                <h2>3. ICL의 마스터 변수로서의 $\alpha_P$</h2>
+
+                <h3>3.1 대규모 스윕</h3>
+                <p>Qwen3-0.6B에서 5개 과제 × 13개 프리픽스 조건 = 65개 데이터 포인트에 대한 체계적 스윕.
+                    프리픽스 조건은 인컨텍스트 예시 수(0~20)를 변화시키며
+                    무관한 프리픽스와 적대적 프리픽스도 포함한다.</p>
+
+                <h3>3.2 압축 법칙</h3>
+                <p>압축비 $c = \mathrm{erank}(G^P)/\mathrm{erank}(G^r)$는
+                    $\alpha_P$의 거의 결정론적 함수이다:</p>
+                <table>
+                    <tr>
+                        <th>과제</th>
+                        <th>선형 적합 $c = a\cdot\alpha_P + b$</th>
+                        <th>$R^2$</th>
+                    </tr>
+                    <tr>
+                        <td>산술</td>
+                        <td>$-0.322\alpha_P + 0.818$</td>
+                        <td>0.986</td>
+                    </tr>
+                    <tr>
+                        <td>사실 QA</td>
+                        <td>$-0.558\alpha_P + 0.933$</td>
+                        <td>1.000</td>
+                    </tr>
+                    <tr>
+                        <td>감성</td>
+                        <td>$-0.573\alpha_P + 0.939$</td>
+                        <td>1.000</td>
+                    </tr>
+                    <tr>
+                        <td>번역</td>
+                        <td>$-0.584\alpha_P + 0.858$</td>
+                        <td>0.999</td>
+                    </tr>
+                    <tr>
+                        <td>단어 유추</td>
+                        <td>$-0.753\alpha_P + 0.909$</td>
+                        <td>0.997</td>
+                    </tr>
+                </table>
+
+                <h3>3.3 과제 의존적 보상: $Q$의 역할</h3>
+                <table>
+                    <tr>
+                        <th>과제</th>
+                        <th>$\Delta I / \Delta\tau_{\mathrm{rep}}$ 기울기</th>
+                        <th>해석</th>
+                    </tr>
+                    <tr>
+                        <td>사실 QA</td>
+                        <td>127.5</td>
+                        <td>최고 $Q$ 보상</td>
+                    </tr>
+                    <tr>
+                        <td>산술</td>
+                        <td>105.3</td>
+                        <td>높은 $Q$ 보상</td>
+                    </tr>
+                    <tr>
+                        <td>감성</td>
+                        <td>66.1</td>
+                        <td>보통</td>
+                    </tr>
+                    <tr>
+                        <td>번역</td>
+                        <td>59.7</td>
+                        <td>낮음</td>
+                    </tr>
+                    <tr>
+                        <td>단어 유추</td>
+                        <td>31.5</td>
+                        <td>최저 $Q$ 보상</td>
+                    </tr>
+                </table>
+
+                <h3>3.4 D×B 해소</h3>
+                $$\Delta \log I = \underbrace{\Delta \log \tau_{\mathrm{rep}}}_{\text{D가 설명 (보편적)}} +
+                \underbrace{\Delta \log Q}_{\text{B가 설명 (과제 의존적)}}.$$
+                <p>Paper D는 <em>압축 법칙</em>을 제공한다:
+                    $\Delta\tau_{\mathrm{rep}} = g(\alpha_P)$, $R^2 > 0.98$.
+                    Paper B는 <em>과제 의존적 품질 법칙</em>을 제공한다:
+                    $\Delta Q$는 과제 구조에 따라 변한다.
+                    이 둘이 함께 $\Delta I$를 설명한다.</p>
+
+
+                <!-- ===== 4. 원뿔 법칙 ===== -->
+                <h2>4. 적응 원뿔 법칙</h2>
+
+                <h3>4.1 상수-ECC 리프</h3>
+                <p>경험적으로 ECC는 ICL과 파인튜닝 모두에서 기계 정밀도 수준으로 불변이다
+                    ($\mathrm{CV} < 10^{-4}$). 상수-ECC 리프 위에서 상태는 두 좌표로 기술된다:</p>
+                        $$x := \Delta\log\tau_{\mathrm{rep}}, \qquad q := \Delta\log Q.$$
+
+                        <h3>4.2 압축-팽창 이분법</h3>
+                        <div class="theorem">
+                            <strong>정리 (적응 원뿔).</strong> 지능 향상 영역
+                            $\mathcal{H} = \{(x,q) : x + q > 0\}$은 다음과 같이 분해된다:
+                            $$\mathcal{H} = \mathcal{R}_{\mathrm{comp}} \sqcup \mathcal{I} \sqcup
+                            \mathcal{R}_{\mathrm{exp}},$$
+                        </div>
+                        <table>
+                            <tr>
+                                <th>부채꼴</th>
+                                <th>조건</th>
+                                <th>해석</th>
+                            </tr>
+                            <tr>
+                                <td>$\mathcal{R}_{\mathrm{comp}}$</td>
+                                <td>$x < 0$, $q> |x|$</td>
+                                <td>압축 + 의무적 $Q$ 초과 보상</td>
+                            </tr>
+                            <tr>
+                                <td>$\mathcal{R}_{\mathrm{exp}}$</td>
+                                <td>$x > 0$, $x+q > 0$</td>
+                                <td>팽창 + $Q$ 보상 불필요</td>
+                            </tr>
+                            <tr>
+                                <td>$\mathcal{I}$</td>
+                                <td>$x = 0$, $q > 0$</td>
+                                <td>경계면 (중립선)</td>
+                            </tr>
+                        </table>
+
+                        <div class="remark">
+                            <strong>비고 (ICL과 FT는 반대 원뿔을 점유).</strong>
+                            <ul>
+                                <li><strong>ICL</strong>: $\dot x \le 0$, $\dot x + \dot q \ge 0$
+                                    (압축적, 가역적, $Q$ 보상 필요).</li>
+                                <li><strong>FT</strong>: $\dot x \ge 0$, $\dot x + \dot q \ge 0$
+                                    (팽창적, 비가역적, $Q$ 부호 미정).</li>
+                            </ul>
+                        </div>
+
+                        <h3>4.3 보상 필요성</h3>
+                        <div class="theorem">
+                            <strong>정리 (보상 필요성).</strong> $\Delta\log\tau_{\mathrm{rep}} < 0$이고 $\Delta\log I> 0$인
+                                ECC-보존 적응에서:
+                                $$\boxed{\Delta\log Q > |\Delta\log\tau_{\mathrm{rep}}|.}$$
+                        </div>
+                        <p>이는 카르노 제약의 유사체이다: 압축적 향상은 품질 초과 보상을 <em>요구</em>한다.</p>
+
+                        <h3>4.4 시너지 상한</h3>
+                        <div class="theorem">
+                            <strong>정리 (상호작용 분해).</strong> 압축 $C$ 후 팽창 $E$로 구성된
+                            복합 적응 $F$에 대해:
+                            $$\Delta_F \log I = \Delta_C \log I + \Delta_E \log I + \Xi,$$
+                            여기서 $\Xi = \frac{1}{2} st\,[X_C, X_E](\log I) + O(\|(s,t)\|^3)$이므로,
+                            교환자(commutator)가 $\log I$에 비자명하게 작용할 때마다 $\Xi \neq 0$.
+                        </div>
+                        <p>경험적으로, ICL 후 FT는 FT 후 ICL과 다른 결과를 준다(중첩 = 0.503),
+                            실천에서 비영 $\Xi$를 확인한다.</p>
+
+
+                        <!-- ===== 5. 사전 ===== -->
+                        <h2>5. 수학적 치환 사전</h2>
+                        <table>
+                            <tr>
+                                <th>ICL 연산</th>
+                                <th>수학적 이름</th>
+                                <th>고전 유사체</th>
+                            </tr>
+                            <tr>
+                                <td>$G^P = \alpha_P J + (1-\alpha_P)G^r$</td>
+                                <td>표적에 대한 선형 수축</td>
+                                <td>Ledoit–Wolf</td>
+                            </tr>
+                            <tr>
+                                <td>$P_\perp G^P P_\perp = (1-\alpha_P)P_\perp G^r P_\perp$</td>
+                                <td>직교 수축</td>
+                                <td>칼만 축소</td>
+                            </tr>
+                            <tr>
+                                <td>$k_{\text{use}}$ 상한 ($h(\alpha_P)$)</td>
+                                <td>엔트로피 기반 랭크 상한</td>
+                                <td>엔트로피 상한</td>
+                            </tr>
+                            <tr>
+                                <td>$\alpha_P = s^2/(s^2+r^2)$</td>
+                                <td>메커니즘 생성 SNR</td>
+                                <td>정합 필터</td>
+                            </tr>
+                            <tr>
+                                <td>프리픽스 제거 $\to G^r$</td>
+                                <td>아핀 역</td>
+                                <td>$(G-\alpha J)/(1-\alpha)$</td>
+                            </tr>
+                        </table>
+
+
+                        <!-- ===== 6. 부정적 결과 ===== -->
+                        <h2>6. 부정적 결과</h2>
+                        <table>
+                            <tr>
+                                <th>가설</th>
+                                <th>결과</th>
+                                <th>교훈</th>
+                            </tr>
+                            <tr>
+                                <td>ICL∘FT $=$ FT∘ICL</td>
+                                <td>✗ 중첩 $= 0.503$</td>
+                                <td>비가환성 ⇒ $\Xi \neq 0$</td>
+                            </tr>
+                            <tr>
+                                <td>$r^* = k_{\text{use}}$</td>
+                                <td>✗ 축소 실패</td>
+                                <td>절대값 비교 무의미</td>
+                            </tr>
+                            <tr>
+                                <td>$\mathrm{erank}(G^P) \le \mathrm{erank}(G^r)$ 일반</td>
+                                <td>✗ $\eta_k \ge s_k$ 필요</td>
+                                <td>스펙트럼 포획이 메커니즘</td>
+                            </tr>
+                            <tr>
+                                <td>압축-팽창 이분법</td>
+                                <td>△ 자명</td>
+                                <td>B 정의의 직접적 결과</td>
+                            </tr>
+                        </table>
+
+
+                        <!-- ===== 7. 논의 ===== -->
+                        <h2>7. 논의</h2>
+
+                        <h4>모든 이론은 정확히 하나의 다음 질문을 연다</h4>
+                        <p>뉴턴의 $F = ma$는 "$F$란 무엇인가?"를 열었다.
+                            섀넌의 $C = B\log(1+\text{SNR})$은 "$C$를 달성하는 부호는?"을 열었다.
+                            Paper D는 "ICL이 그래디언트-그람 공간에서 무엇을 하는가?"에 답하고
+                            "$\alpha_P$를 결정하는 것은?" — Paper E의 주제 — 를 연다.</p>
+
+                        <h4>단일 변수의 한계</h4>
+                        <p>단일 과제 내에서 $\mathrm{corr}(\alpha_P, \Delta I) = 0.98$.
+                            5개 과제에 걸치면 상관이 $R^2 = 0.39$로 떨어진다.
+                            이는 실패가 아닌 구조적 사실이다:
+                            $\alpha_P$는 $\Delta\tau_{\mathrm{rep}}$를 지배하지만,
+                            $\Delta I$는 추가로 $\Delta Q$에 의존한다.</p>
+
+                        <h4>솔직한 경계</h4>
+                        <table>
+                            <tr>
+                                <th>정리</th>
+                                <th>증명된 것</th>
+                                <th>증명 불가능한 것</th>
+                            </tr>
+                            <tr>
+                                <td>D.1 (원뿔)</td>
+                                <td>부채꼴 분해</td>
+                                <td>양 부채꼴의 도달 가능성 (경험적)</td>
+                            </tr>
+                            <tr>
+                                <td>D.2a (수축)</td>
+                                <td>조건부 아핀 형식</td>
+                                <td>$\alpha_P$가 왜 특정 값을 취하는지</td>
+                            </tr>
+                            <tr>
+                                <td>D.2b (erank)</td>
+                                <td>$\eta_k \ge s_k$ 하의 erank 상한</td>
+                                <td>스펙트럼 포획 없는 일반 상한</td>
+                            </tr>
+                            <tr>
+                                <td>D.3 (보상)</td>
+                                <td>$\Delta Q > |\Delta x|$</td>
+                                <td>$\tau_{\text{stat}}$와 $\tau_{\text{opt}}$의 분리</td>
+                            </tr>
+                            <tr>
+                                <td>D.4 (상호작용)</td>
+                                <td>$\Xi$의 BCH 추정</td>
+                                <td>$\Xi$ 부호는 측정 필요</td>
+                            </tr>
+                        </table>
+
+
+                        <!-- ===== 8. 결론 ===== -->
+                        <h2>8. 결론</h2>
+                        <p>Paper A는 계산을 기하로 대체했다. Paper B는 성능을 분해로 대체했다.
+                            Paper D는 적응을 합의 수축으로 대체한다. 세 편 모두 동일한 패턴을 따른다:
+                            <em>알려진 계산을 올바른 수학으로 대체하면, 직관에 반하는 구조가 나타난다.</em>
+                        </p>
+                        <p>ICL은 그래디언트 기하를 합의 모드 쪽으로 압축한다.
+                            직교 수축 정리는 이 압축이 정확히 $(1-\alpha_P)$임을 보이며,
+                            엔트로피 상한은 관측값에 수치적으로 근접한 유효-랭크 상한을 산출한다
+                            (산술 과제에서 $\approx 1.24$ vs. $\approx 1.25$).
+                            8개 아키텍처에 대한 교차 모델 검증은 모든 경우 예측 오차 3% 미만으로
+                            수축 법칙을 확인한다.</p>
+                        <p>$\alpha_P$가 ICL의 마스터 변수라는 발견은 카르노가
+                            $T_c/T_h$를 효율 상한으로 식별한 것에 평행한다:
+                            단일 측정 가능 양이 상한을 결정한다.
+                            Paper B의 품질 인자 $Q$와 결합하면 전체 그림은: 상수-ECC 리프 위에서
+                            ICL이 압축 원뿔을, 파인튜닝이 팽창 원뿔을 점유하는
+                            <strong>적응 원뿔 법칙</strong>이다.
+                        </p>
+                        <p>$\alpha_P$를 결정하는 것 — 이 프레임워크의 "볼츠만 질문" — 은 Paper E의 주제이다.</p>
+
+
+                        <!-- ===== 참고문헌 ===== -->
+                        <h2>참고문헌</h2>
+                        <ol>
+                            <li>Brown et al. "Language models are few-shot learners." NeurIPS, 2020.</li>
+                            <li><a href="paper_a_kr.html">Lee, H. R. "The d² pullback theorem for attention score
+                                    manifolds." 2026.</a> DOI: <a
+                                    href="https://doi.org/10.5281/zenodo.18842724">10.5281/zenodo.18842724</a>.</li>
+                            <li><a href="paper_b_kr.html">Lee, H. R. "The information theory of AI architectures: ECC
+                                    and
+                                    intelligence decomposition." 2026.</a> DOI: <a
+                                    href="https://doi.org/10.5281/zenodo.18865785">10.5281/zenodo.18865785</a>.</li>
+                            <li>Akyürek et al. "What learning algorithm is in-context learning?" ICLR, 2023.</li>
+                            <li>Xie et al. "An explanation of in-context learning as implicit Bayesian inference." ICLR,
+                                2022.</li>
+                            <li>von Oswald et al. "Transformers learn in-context by gradient descent." ICML, 2023.</li>
+                            <li>Todd et al. "Function vectors in large language models." ICLR, 2024.</li>
+                            <li>Hendel et al. "In-context learning creates task vectors." EMNLP Findings, 2023.</li>
+                            <li>Ledoit, Wolf. "A well-conditioned estimator for large-dimensional covariance matrices."
+                                J. Multivariate Analysis, 2004.</li>
+                        </ol>
+
+                        <p style="margin-top:3rem; color: var(--muted); font-size: 0.85rem; text-align: center;">
+                            © 2026 이형록 · <a href="mailto:rok@gahyeon.net">rok@gahyeon.net</a> · <a
+                                href="mailto:hyeongrok91@gmail.com">hyeongrok91@gmail.com</a> · <a
+                                href="index_kr.html">홈</a>
+                        </p>
+
+        </div>
+</body>
+
+</html>
